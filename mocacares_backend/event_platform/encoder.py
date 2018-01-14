@@ -20,5 +20,13 @@ class EventEncoder(DjangoJSONEncoder):
         return super(EventEncoder, self).default(obj)
 
 
+class CommentEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Comment):
+            return {
+                
+            }
+        return super(CommentEncoder, self).default(obj)
+
 
 

@@ -6,11 +6,11 @@ from django.http import HttpResponse, JsonResponse
 
 
 def get_user(request):
-    pass
+    return HttpResponse(status=200)
 
 
 def get_comment_list(request):
-    pass
+    return HttpResponse(status=200)
 
 
 def get_events_by_type(request):
@@ -27,4 +27,29 @@ def get_event(request):
 
 
 def post_comment(request):
-    pass
+    return HttpResponse(status=200)
+
+
+def get_events(request):
+    return HttpResponse(status=200)
+
+
+def get_event_types(request):
+    return HttpResponse(status=200)
+
+
+def post_feedback(request):
+    feedback_content = request.POST['content']
+    print(feedback_content)
+    return JsonResponse({
+        'msg': 'feedback sent successfully'
+    }, status=200)
+
+
+def get_recommended_events(request):
+    return HttpResponse(status=200)
+
+
+
+
+

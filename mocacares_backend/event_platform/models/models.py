@@ -17,11 +17,7 @@ class Event(models.Model):
         return str(self.id) + ". " + str(self.title) + ": " + self.description
 
 
-class Tag(models.Model):
-    pass
-
-
-class EventCategory(models.Model):
+class EventType(models.Model):
     pass
 
 

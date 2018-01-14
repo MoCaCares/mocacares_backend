@@ -1,0 +1,8 @@
+###### production ######
+django
+python-memcached
+pillow
+
+###### development ######
+pylint  # coding style
+isort

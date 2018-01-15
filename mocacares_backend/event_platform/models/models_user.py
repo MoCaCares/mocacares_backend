@@ -13,24 +13,24 @@ from django.utils.translation import ugettext_lazy as _
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, nickname, email_address, password, **extra_fields):
+    def _create_user(self, username, email_address, password, **extra_fields):
         """
-        Creates and saves a User with the given nickname, email and password.
+        Creates and saves a User with the given username, email and password.
         """
-        if not nickname:
-            raise ValueError('The given nickname must be set')
+        if not username:
+            raise ValueError('The given username must be set')
         email_address = self.normalize_email(email_address)
-        user = self.model(nickname=nickname, email_address=email_address, **extra_fields)
+        user = self.model(username=username, email_address=email_address, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, nickname, email_address=None, password=None, **extra_fields):
+    def create_user(self, username, email_address=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(nickname, email_address, password, **extra_fields)
+        return self._create_user(username, email_address, password, **extra_fields)
 
-    def create_superuser(self, nickname, email_address, password, **extra_fields):
+    def create_superuser(self, username, email_address, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -39,7 +39,7 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self._create_user(nickname, email_address, password, **extra_fields)
+        return self._create_user(username, email_address, password, **extra_fields)
 
 
 def upload_to(instance, filename):
@@ -50,7 +50,7 @@ def upload_to(instance, filename):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    nickname = models.CharField(max_length=254)
+    username = models.CharField(max_length=254)
 
     email_address = models.EmailField(max_length=254, unique=True)
 
@@ -71,7 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email_address"
 
-    REQUIRED_FIELDS = ["nickname"]
+    REQUIRED_FIELDS = ["username"]
 
     is_active = models.BooleanField(
         default=True,
@@ -88,13 +88,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def get_full_name(self):
-        return self.nickname + "<" + self.email_address + ">" + "level:" + str(self.level) + " superuser:" + str(self.is_superuser) + " staff:" + str(self.is_staff)
+        return self.username + "<" + self.email_address + ">" + "level:" + str(self.level) + " superuser:" + str(self.is_superuser) + " staff:" + str(self.is_staff)
 
     def get_short_name(self):
-        return self.nickname
+        return self.username
 
-    def set_nickname(self, nickname):
-        self.nickname = nickname
+    def set_username(self, username):
+        self.username = username
 
     def set_email_address(self, email_address):
         self.email_address = email_address

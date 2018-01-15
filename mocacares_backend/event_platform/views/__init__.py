@@ -42,6 +42,7 @@ def post_feedback(request):
     feedback_content = request.POST['content']
     print(feedback_content)
     return JsonResponse({
+        'code': 1,
         'msg': 'feedback sent successfully'
     }, status=200)
 

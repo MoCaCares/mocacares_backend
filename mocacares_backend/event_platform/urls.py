@@ -16,5 +16,7 @@ urlpatterns = [
 
     url(r'^api/users/userInfoGet', views.get_user),
     
+    url(r'^api/login/login', views.user_login),
+
     url(r'^api/public/feedback', views.post_feedback),
 ]

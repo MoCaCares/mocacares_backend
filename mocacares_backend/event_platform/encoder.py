@@ -16,8 +16,8 @@ class EventSummaryEncoder(DjangoJSONEncoder):
         if isinstance(obj, Event):
             return {
                 "id": obj.pk,
-                "start_time": "0000-00-00 00:00:00",
-                "end_time": "0000-00-00 00:00:00",
+                "start_time": obj.start_time,
+                "end_time": obj.end_time,
                 "content": "hellodhjsds",
                 "title": obj.title,
                 "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
@@ -26,7 +26,7 @@ class EventSummaryEncoder(DjangoJSONEncoder):
                 "type": obj.event_type.pk, 
                 "t_name": obj.event_type.name
             }
-        return super(EventEncoder, self).default(obj)
+        return super(EventSummaryEncoder, self).default(obj)
 
 
 class EventDetailEncoder(DjangoJSONEncoder):
@@ -34,8 +34,8 @@ class EventDetailEncoder(DjangoJSONEncoder):
         if isinstance(obj, Event):
             return {
                 "id": obj.pk,
-                "start_time": "0000-00-00 00:00:00",
-                "end_time": "0000-00-00 00:00:00",
+                "start_time": obj.start_time,
+                "end_time": obj.end_time,
                 "title": obj.title,
                 "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
                 "desrc": obj.description,
@@ -46,7 +46,7 @@ class EventDetailEncoder(DjangoJSONEncoder):
                 "u_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
 
             }
-        return super(EventEncoder, self).default(obj)
+        return super(EventDetailEncoder, self).default(obj)
 
 
 class CommentEncoder(DjangoJSONEncoder):

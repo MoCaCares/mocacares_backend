@@ -8,10 +8,13 @@ from django.db.models import Q
 def get_comments(request):
     if 'aid' in request.POST:
         event = Event.objects.get(pk=request.POST['aid'])
-        comments = list(event.comment_set)
-        print(comments)
+        comments = list(event.comment_set.all())
         return JsonResponse(
-            comments, 
+            {
+                'code': 0,
+                'msg': '',
+                'info': comments
+            }, 
             encoder=CommentEncoder, 
             safe=False  # if safe = True, only dict can be passed
         )

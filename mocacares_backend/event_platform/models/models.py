@@ -17,6 +17,8 @@ class Event(models.Model):
     end_time = models.DateTimeField(auto_now=False, auto_now_add=True)
     event_type = models.ForeignKey(EventType, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
+    participants = models.ManyToManyField(User, related_name='participated_event_set')
+    followers = models.ManyToManyField(User, related_name='bookmarked_event_set')
 
     def __unicode__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description

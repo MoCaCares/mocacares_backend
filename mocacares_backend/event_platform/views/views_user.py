@@ -27,6 +27,10 @@ def user_login(request):
         return HttpResponse("account not found", status=404)
 
 
+def get_user_space(request):
+    user = get_user(request)
+    return JsonResponse({})
+
 
 
 

@@ -16,8 +16,14 @@ urlpatterns = [
 
     url(r'^api/event/commentList', views.get_comments),
 
+    url(r'^api/event/eventBook', views.book_event),
+
+    url(r'^api/event/eventMyBook', views.get_booked_events),
+
     url(r'^api/users/userInfoGet', views.get_user_info),
     
+    url(r'^api/users/userSpace', views.get_user_space),
+
     url(r'^api/login/login', views.user_login),
 
     url(r'^api/public/feedback', views.post_feedback),

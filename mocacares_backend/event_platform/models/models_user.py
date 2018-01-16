@@ -62,6 +62,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     portrait = models.ImageField(upload_to=upload_to, blank=True, null=True)
 
+    user_type = models.CharField(max_length=64)
+
     @property
     def portrait_url(self):
         if self.portrait and hasattr(self.portrait, 'url'):

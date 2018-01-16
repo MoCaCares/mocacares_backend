@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Event, Feedback, Comment
+from .models import User, Event, Feedback, Comment, EventType
 from django.contrib.sessions.models import Session
 
 class SessionAdmin(admin.ModelAdmin):
@@ -22,12 +22,17 @@ class FeedbackModelAdmin(admin.ModelAdmin):
 class CommentModelAdmin(admin.ModelAdmin):
     list_display = ['id']
 
+class EventTypeModelAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+
+
 admin.site.register(Session, SessionAdmin)
 
 admin.site.register(User, UserModelAdmin)
 admin.site.register(Event, EventModelAdmin)
 admin.site.register(Feedback, FeedbackModelAdmin)
 admin.site.register(Comment, CommentModelAdmin)
+admin.site.register(EventType, EventTypeModelAdmin)
 
 
 

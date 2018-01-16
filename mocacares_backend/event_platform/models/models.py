@@ -5,6 +5,9 @@ from django.db import models
 from .models_user import User
 
 
+class EventType(models.Model):
+    name = models.TextField()
+
 
 class Event(models.Model):
     title = models.CharField(max_length=1028)
@@ -12,13 +15,10 @@ class Event(models.Model):
     address = models.TextField()
     start_time = models.DateTimeField(auto_now=False, auto_now_add=True)
     end_time = models.DateTimeField(auto_now=False, auto_now_add=True)
+    event_type = models.ForeignKey(EventType, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return str(self.id) + ". " + str(self.title) + ": " + self.description
-
-
-class EventType(models.Model):
-    pass
 
 
 class Feedback(models.Model):

@@ -14,6 +14,8 @@ urlpatterns = [
 
     url(r'^api/event/eventTypeList', views.get_event_types),
 
+    url(r'^api/event/commentList', views.get_comments),
+
     url(r'^api/users/userInfoGet', views.get_user),
     
     url(r'^api/login/login', views.user_login),

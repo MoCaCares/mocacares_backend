@@ -16,7 +16,7 @@ urlpatterns = [
 
     url(r'^api/event/commentList', views.get_comments),
 
-    url(r'^api/users/userInfoGet', views.get_user),
+    url(r'^api/users/userInfoGet', views.get_user_info),
     
     url(r'^api/login/login', views.user_login),
 

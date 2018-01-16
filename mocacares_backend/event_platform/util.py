@@ -7,8 +7,10 @@ from django.utils.module_loading import import_string
 
 SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
 
+
 def load_backend(path):
     return import_string(path)()
+
 
 def get_user(request):
     session = None
@@ -20,7 +22,7 @@ def get_user(request):
         return AnonymousUser()
 
     user_id = session['_auth_user_id']
-    backend_path = session['_auth_user_backen']
+    backend_path = session['_auth_user_backend']
     
     if backend_path in settings.AUTHENTICATION_BACKENDS:
         backend = load_backend(backend_path)

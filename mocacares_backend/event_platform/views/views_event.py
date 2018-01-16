@@ -9,9 +9,10 @@ def get_comments(request):
     if 'aid' in request.POST:
         event = Event.objects.get(pk=request.POST['aid'])
         comments = list(event.comment_set.all())
+        print(comments)
         return JsonResponse(
             {
-                'code': 0,
+                'code': 1,
                 'msg': '',
                 'info': comments
             }, 
@@ -21,7 +22,7 @@ def get_comments(request):
     return JsonResponse({
         'code': 0,
         'msg': 'Event id not given'
-    },status=400)
+    }, status=400)
 
 
 def get_events(request):

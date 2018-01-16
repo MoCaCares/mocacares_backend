@@ -59,9 +59,15 @@ class CommentEncoder(DjangoJSONEncoder):
                 "content": obj.content,
                 "c_time": obj.post_time,  # "0000-00-00 00:00:00"
                 "u_username": obj.poster.username,
-                "u_mg": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
+                "u_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
             }
         return super(CommentEncoder, self).default(obj)
+
+
+
+
+
+
 
 
 

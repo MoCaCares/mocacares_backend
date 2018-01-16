@@ -28,9 +28,8 @@ class Feedback(models.Model):
 
 class Comment(models.Model):
     content = models.TextField()
-    description = models.TextField()
-    post_time = models.DateTimeField(auto_now=False, auto_now_add=True)
     target_event = models.ForeignKey(Event, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)  # many Documents to one User
+    post_time = models.DateTimeField(auto_now=False, auto_now_add=True)
 
 

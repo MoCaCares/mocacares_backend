@@ -2,6 +2,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 from .models import *
 
 
+def format_datetime(datetime):
+    return datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+
 class UserEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, User):
@@ -14,10 +18,12 @@ class UserEncoder(DjangoJSONEncoder):
 class EventSummaryEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, Event):
+            print('\n\n' + format_datetime(obj.start_time) + '\n\n')
+            print('\n\n' + format_datetime(obj.end_time) + '\n\n')
             return {
                 "id": obj.pk,
-                "start_time": obj.start_time,
-                "end_time": obj.end_time,
+                "start_time": format_datetime(obj.start_time),
+                "end_time": format_datetime(obj.end_time),
                 "content": "hellodhjsds",
                 "title": obj.title,
                 "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
@@ -34,8 +40,8 @@ class EventDetailEncoder(DjangoJSONEncoder):
         if isinstance(obj, Event):
             return {
                 "id": obj.pk,
-                "start_time": obj.start_time,
-                "end_time": obj.end_time,
+                "start_time": format_datetime(obj.start_time),
+                "end_time": format_datetime(obj.end_time),
                 "title": obj.title,
                 "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
                 "desrc": obj.description,
@@ -57,7 +63,7 @@ class CommentEncoder(DjangoJSONEncoder):
                 "uid": obj.poster.pk,
                 "aid": obj.target_event.pk,
                 "content": obj.content,
-                "c_time": obj.post_time,  # "0000-00-00 00:00:00"
+                "c_time": format_datetime(obj.post_time),  # "0000-00-00 00:00:00"
                 "u_username": obj.poster.username,
                 "u_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
             }

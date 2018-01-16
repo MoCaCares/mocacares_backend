@@ -10,15 +10,11 @@ def get_comments(request):
         event = Event.objects.get(pk=request.POST['aid'])
         comments = list(event.comment_set.all())
         print(comments)
-        return JsonResponse(
-            {
-                'code': 1,
-                'msg': '',
-                'info': comments
-            }, 
-            encoder=CommentEncoder, 
-            safe=False  # if safe = True, only dict can be passed
-        )
+        return JsonResponse({
+            'code': 1,
+            'msg': '',
+            'info': comments
+        }, encoder=CommentEncoder, safe=False)
     return JsonResponse({
         'code': 0,
         'msg': 'Event id not given'

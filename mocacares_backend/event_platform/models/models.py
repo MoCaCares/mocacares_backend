@@ -13,12 +13,12 @@ class Event(models.Model):
     title = models.CharField(max_length=1028)
     description = models.TextField()
     address = models.TextField()
-    start_time = models.DateTimeField(auto_now=False, auto_now_add=True)
-    end_time = models.DateTimeField(auto_now=False, auto_now_add=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     event_type = models.ForeignKey(EventType, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
-    participants = models.ManyToManyField(User, related_name='participated_event_set')
-    followers = models.ManyToManyField(User, related_name='bookmarked_event_set')
+    participants = models.ManyToManyField(User, related_name='participated_event_set', blank=True)
+    followers = models.ManyToManyField(User, related_name='bookmarked_event_set', blank=True)
 
     def __unicode__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description

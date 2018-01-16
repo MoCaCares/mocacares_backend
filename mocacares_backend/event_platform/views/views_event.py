@@ -46,10 +46,14 @@ def get_events(request):
 
 
 def get_event(request):
-    event_id = request.GET['aid']
+    event_id = request.POST['aid']
     try:
         event = Event.objects.get(pk=event_id)
-        return JsonResponse(event, encoder=EventDetailEncoder, safe=False)
+        return JsonResponse({
+            'code': 1,
+            'msg': '', 
+            'info': event
+        }, encoder=EventDetailEncoder, safe=False)
     except ObjectDoesNotExist:
         return HttpResponse(status=404)
 

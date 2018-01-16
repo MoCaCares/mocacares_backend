@@ -16,9 +16,10 @@ class Event(models.Model):
     start_time = models.DateTimeField(auto_now=False, auto_now_add=True)
     end_time = models.DateTimeField(auto_now=False, auto_now_add=True)
     event_type = models.ForeignKey(EventType, on_delete=models.CASCADE)
+    poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __unicode__(self):
-        return str(self.id) + ". " + str(self.title) + ": " + self.description
+        return str(self.pk) + ". " + str(self.title) + ": " + self.description
 
 
 class Feedback(models.Model):

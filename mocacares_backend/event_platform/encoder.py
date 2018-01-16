@@ -36,13 +36,15 @@ class EventDetailEncoder(DjangoJSONEncoder):
                 "id": obj.pk,
                 "start_time": "0000-00-00 00:00:00",
                 "end_time": "0000-00-00 00:00:00",
-                "content": "hellodhjsds",
                 "title": obj.title,
                 "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
                 "desrc": obj.description,
                 "add": obj.address,
                 "type": obj.event_type.pk, 
-                "t_name": obj.event_type.name
+                "t_name": obj.event_type.name,
+                "uid": obj.poster.pk,
+                "u_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
+
             }
         return super(EventEncoder, self).default(obj)
 

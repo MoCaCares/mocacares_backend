@@ -1,5 +1,6 @@
 from .views_event import *
 from .views_user import *
+from .views_chat import *
 from ..models import *
 from ..encoder import *
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,7 +10,8 @@ from ..util import get_user
 
 
 def get_user_info(request):
-    return HttpResponse(status=200)
+    user = get_user(request)
+    return JsonResponse(api_returned_object(info=user), encoder=UserInfoEncoder)
 
 
 def post_comment(request):
@@ -72,26 +74,35 @@ def book_event(request):
 
 def get_booked_events(request):
     if '_token' not in request.POST or 'type' not in request.POST:
-        return JsonResponse({
-            'code': 0,
-            'msg': 'invalid request'
-        }, status=400)
+        return response_of_failure("missing field(s)")
     user = get_user(request)
     if request.POST['type'] == '1':
         events = user.participated_event_set.all()
     elif request.POST['type'] == '2':
         events = user.bookmarked_event_set.all()
     else:
-        return JsonResponse({
-            'code': 0,
-            'msg': 'invalid request'
-        }, status=400)
+        return response_of_failure("invalid request")
     return JsonResponse({
         'code': 1,
         'msg': 'success',
         'info': list(events)
     }, encoder=EventSummaryEncoder)
 
+
+
+def get_published_events(request):
+    if '_token' not in request.POST or 'page' not in request.POST:
+        return JsonResponse({
+            'code': 0,
+            'msg': 'invalid request'
+        }, status=400)
+    user = get_user(request)
+    events = Event.objects.filter(poster=user)
+    return JsonResponse({
+        'code': 1,
+        'msg': 'success',
+        'info': list(events)
+    }, encoder=EventSummaryEncoder)
 
 
 

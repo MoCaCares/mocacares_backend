@@ -6,20 +6,28 @@ def format_datetime(datetime):
     return datetime.strftime('%Y-%m-%d %H:%M:%S')
 
 
-class UserEncoder(DjangoJSONEncoder):
+class UserInfoEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, User):
             return {
-
+                'id': obj.pk,
+                'username': obj.username,
+                'type': obj.user_type,
+                'img': "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
+                'is_show_email': True,  # TODO: set accordingly
+                'email': obj.email_address,
+                'statement': 'to be add',
+                'occupation': 'to be add',
+                'age': '1',
+                'sex': '1',
+                'is_show_event': False
             }
-        return super(UserEncoder, self).default(obj)
+        return super(UserInfoEncoder, self).default(obj)
 
 
 class EventSummaryEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, Event):
-            print('\n\n' + format_datetime(obj.start_time) + '\n\n')
-            print('\n\n' + format_datetime(obj.end_time) + '\n\n')
             return {
                 "id": obj.pk,
                 "start_time": format_datetime(obj.start_time),

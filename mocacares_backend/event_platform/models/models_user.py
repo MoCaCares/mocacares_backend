@@ -33,6 +33,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, username, email_address, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('user_type', 2)
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -62,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     portrait = models.ImageField(upload_to=upload_to, blank=True, null=True)
 
-    user_type = models.CharField(max_length=64)  # 1: volunteer; 2: organization
+    user_type = models.IntegerField()  # 1: volunteer; 2: organization
 
     @property
     def portrait_url(self):

@@ -30,6 +30,7 @@ class EventSummaryEncoder(DjangoJSONEncoder):
         if isinstance(obj, Event):
             return {
                 "id": obj.pk,
+                "aid": obj.pk,
                 # "start_time": format_datetime(obj.start_time),
                 # "end_time": format_datetime(obj.end_time),
                 'week': '1',
@@ -53,6 +54,7 @@ class EventDetailEncoder(DjangoJSONEncoder):
         if isinstance(obj, Event):
             return {
                 "id": obj.pk,
+                "aid": obj.pk,
                 # "start_time": format_datetime(obj.start_time),
                 # "end_time": format_datetime(obj.end_time),
                 'week': '1',

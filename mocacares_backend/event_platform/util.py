@@ -3,6 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from importlib import import_module
 from django.conf import settings
 from django.utils.module_loading import import_string
+from django.http import HttpResponse, JsonResponse
 
 
 SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
@@ -30,3 +31,20 @@ def get_user(request):
         # TODO: Verify the session
         
     return user or AnonymousUser()
+
+
+def response_of_failure(msg=''):
+    return JsonResponse({
+        'code': '0',
+        'msg': msg,
+        'info': ''
+    })
+
+
+def api_returned_object(code='1', msg='', info=''):
+    return {
+        'code': code,
+        'msg': msg,
+        'info': info
+    }
+

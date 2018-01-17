@@ -1,5 +1,6 @@
 from ..models import *
 from ..encoder import *
+from ..util import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
@@ -9,12 +10,7 @@ def get_comments(request):
     if 'aid' in request.POST:
         event = Event.objects.get(pk=request.POST['aid'])
         comments = list(event.comment_set.all())
-        print(comments)
-        return JsonResponse({
-            'code': 1,
-            'msg': '',
-            'info': comments
-        }, encoder=CommentEncoder, safe=False)
+        return JsonResponse(api_returned_object(info=comments), encoder=CommentEncoder)
     return JsonResponse({
         'code': 0,
         'msg': 'Event id not given'
@@ -38,11 +34,7 @@ def get_events(request):
     if search_key is not None:
         events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
     
-    return JsonResponse({
-        'code': 1,
-        'msg': '', 
-        'info': list(events)
-    }, encoder=EventSummaryEncoder, safe=False)
+    return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
 
 def get_event(request):
@@ -53,9 +45,9 @@ def get_event(request):
             'code': 1,
             'msg': '', 
             'info': event
-        }, encoder=EventDetailEncoder, safe=False)
+        }, encoder=EventDetailEncoder)
     except ObjectDoesNotExist:
-        return HttpResponse(status=404)
+        return response_of_failure(msg='event cannot be found')
 
 
 def get_event_types(request):
@@ -67,11 +59,7 @@ def get_event_types(request):
             'name': event_type.name,
             'img': 'https://www.newstatesman.com/sites/all/themes/creative-responsive-theme/images/new_statesman_events.jpg'
         })
-    return JsonResponse({
-        'code': 1,
-        'msg': '',
-        'info': response
-    }, safe=False)
+    return JsonResponse(api_returned_object(info=response))
 
 
 

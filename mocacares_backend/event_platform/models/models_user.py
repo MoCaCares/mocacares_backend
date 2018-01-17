@@ -50,7 +50,7 @@ def upload_to(instance, filename):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=254)
+    username = models.CharField(max_length=254, unique=True)
 
     email_address = models.EmailField(max_length=254, unique=True)
 
@@ -62,7 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     portrait = models.ImageField(upload_to=upload_to, blank=True, null=True)
 
-    user_type = models.CharField(max_length=64)
+    user_type = models.CharField(max_length=64)  # 1: volunteer; 2: organization
 
     @property
     def portrait_url(self):

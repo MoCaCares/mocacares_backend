@@ -36,9 +36,9 @@ def user_login(request):
                 'msg': 'login success'
             })
         else:
-            return response_of_failure("account is not active")
+            return response_of_failure('account is not active')
     else:
-        return response_of_failure("account not found")
+        return response_of_failure('account not found')
 
 
 def user_register(request):
@@ -73,9 +73,41 @@ def user_register(request):
         return response_of_failure('username or email already exists')
 
 
-def get_user_space(request):
+def get_user_info(request):
+    if '_token' not in request.POST:
+        return response_of_failure('missing field(s)')
     user = get_user(request)
-    return JsonResponse({})
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+    return JsonResponse(api_returned_object(info=user), encoder=UserInfoEncoder)
+
+
+def get_user_space(request):
+    if 'uid' not in request.POST or '_token' not in request.POST:
+        return response_of_failure('missing field(s)')
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+
+    try:
+        target_user = User.objects.get(pk=request.POST['uid'])
+        target_user_json = UserInfoEncoder().default(target_user)
+        target_user_json['statement'] = 'to be add'
+        target_user_json['occupation'] = 'to be add'
+        
+        target_user_space_json = {}
+        target_user_space_json['user'] = target_user_json
+        target_user_space_json['event'] = []
+
+        if target_user in user.follower_set.all():
+            target_user_space_json['is_friend'] = '1'
+        else:
+            target_user_space_json['is_friend'] = '0'
+    except ObjectDoesNotExist:
+        return response_of_failure(msg='target user not found')
+
+    print(target_user_space_json)
+    return JsonResponse(api_returned_object(info=target_user_space_json))
 
 
 

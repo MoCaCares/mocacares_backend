@@ -1,4 +1,5 @@
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.models import AnonymousUser
 from .models import *
 
 

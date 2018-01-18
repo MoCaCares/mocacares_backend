@@ -38,13 +38,41 @@ def get_events(request):
 
 
 def add_event(request):
-    print('add')
     pass
 
 
 def delete_event(request):
-    # uid =
-    pass
+    # TODO: Change lines below
+
+
+
+
+    # token = request.POST['_token']
+    # uid = check_token(token)
+    uid = 1
+
+
+
+
+
+    user = User.objects.get(pk=uid)
+    user_type = user.user_type
+    if user_type != 2:
+        return JsonResponse({
+            'code': 0,
+            'msg': 'No permission'
+        })
+    event_id = request.POST['aid']
+    try:
+        event = Event.objects.get(pk=event_id)
+        event.delete()
+        return JsonResponse({
+            'code': 1,
+            'msg': 'Success'
+        })
+    except ObjectDoesNotExist:
+        return response_of_failure(msg='event cannot be found')
+
 
 
 def get_event(request):
@@ -75,10 +103,15 @@ def get_event_types(request):
 
 
 # Helper functions, temporary
-def check_token():
+def check_token(token):
+    auth_str = auth_code_de(token, 'apiToken')
+    auth_arr = auth_str.split('|')
+    uid = auth_arr[0]
+    return 1
+
+
+def auth_code_de(string, key):
+    # TODO: To implement
     pass
-
-
-
 
 

@@ -33,8 +33,32 @@ def get_events(request):
         events = events.filter(event_type=event_type)
     if search_key is not None:
         events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
-    
+
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
+
+
+def add_event(request):
+    pass
+
+
+def delete_event(request):
+    user = get_user(request)
+    user_type = user.user_type
+    if user_type != 2:
+        return JsonResponse({
+            'code': 0,
+            'msg': 'No permission'
+        })
+    event_id = request.POST['aid']
+    try:
+        event = Event.objects.get(pk=event_id)
+        event.delete()
+        return JsonResponse({
+            'code': 1,
+            'msg': 'Success'
+        })
+    except ObjectDoesNotExist:
+        return response_of_failure(msg='event cannot be found')
 
 
 def get_event(request):
@@ -43,7 +67,7 @@ def get_event(request):
         event = Event.objects.get(pk=event_id)
         return JsonResponse({
             'code': 1,
-            'msg': '', 
+            'msg': '',
             'info': event
         }, encoder=EventDetailEncoder)
     except ObjectDoesNotExist:
@@ -60,13 +84,3 @@ def get_event_types(request):
             'img': 'https://www.newstatesman.com/sites/all/themes/creative-responsive-theme/images/new_statesman_events.jpg'
         })
     return JsonResponse(api_returned_object(info=response))
-
-
-
-
-
-
-
-
-
-

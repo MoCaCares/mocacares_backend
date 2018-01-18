@@ -1,17 +1,15 @@
+import threading
+
 from .views_event import *
 from .views_user import *
 from .views_chat import *
 from ..models import *
 from ..encoder import *
+from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from ..util import get_user
-
-
-def get_user_info(request):
-    user = get_user(request)
-    return JsonResponse(api_returned_object(info=user), encoder=UserInfoEncoder)
 
 
 def post_comment(request):
@@ -37,8 +35,37 @@ def post_comment(request):
     })
 
 
+class EmailThread(threading.Thread):  # TODO: move to util.py
+    def __init__(self, subject, content, receiver_list):
+        self.subject = subject
+        self.content = content
+        self.receiver_list = receiver_list
+        super(EmailThread, self).__init__()
+    
+    def run(self):
+        # context = {
+        #     'team': self.team,
+        #     'members': self.team.member_set.all(),
+        # }
+        # content = render_to_string('form/team_email.html', context)
+        email = EmailMessage(
+            subject=self.subject,
+            body=self.content,
+            to=self.receiver_list,
+            # cc=['']
+        )
+        # email.content_subtype = "html"
+        email.send(fail_silently=False)
+
+
 def post_feedback(request):
     feedback_content = request.POST['content']
+    EmailThread(
+        subject='feedback from user',
+        content=feedback_content,
+        receiver_list=['royl8@qq.com']
+    ).start()
+
     return JsonResponse({
         'code': 1,
         'msg': 'feedback sent successfully'

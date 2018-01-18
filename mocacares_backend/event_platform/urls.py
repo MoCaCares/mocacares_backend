@@ -37,4 +37,6 @@ urlpatterns = [
     url(r'^api/public/feedback', views.post_feedback),
 
     url(r'^api/chat/getNoRead', views.get_noreads),
+
+    url(r'^api/chat/friendAdd', views.follow_user),
 ]

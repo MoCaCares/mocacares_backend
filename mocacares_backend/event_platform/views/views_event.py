@@ -11,10 +11,7 @@ def get_comments(request):
         event = Event.objects.get(pk=request.POST['aid'])
         comments = list(event.comment_set.all())
         return JsonResponse(api_returned_object(info=comments), encoder=CommentEncoder)
-    return JsonResponse({
-        'code': 0,
-        'msg': 'Event id not given'
-    }, status=400)
+    return response_of_failure(msg='Event ID not given')
 
 
 def get_events(request):

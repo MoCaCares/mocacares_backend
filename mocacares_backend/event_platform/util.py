@@ -41,10 +41,19 @@ def response_of_failure(msg=''):
     })
 
 
+def response_of_success(msg=''):
+    return JsonResponse({
+        'code': '1',
+        'msg': msg,
+        'info': ''
+    })
+
+
 def api_returned_object(code='1', msg='', info=''):
     return {
         'code': code,
         'msg': msg,
         'info': info
     }
+
 

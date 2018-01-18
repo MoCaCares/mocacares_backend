@@ -15,8 +15,20 @@ def get_noreads(request):
     }))
 
 
+def follow_user(request):
+    if 'fid' not in request.POST or '_token' not in request.POST:
+        return response_of_failure('missing field(s)')
 
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
 
+    try:
+        target_user = User.objects.get(pk=request.POST['fid'])
+        user.following_users.add(target_user)
+    except ObjectDoesNotExist:
+        return response_of_failure(msg='target user not found')
 
+    return response_of_success(msg='success')
 
 

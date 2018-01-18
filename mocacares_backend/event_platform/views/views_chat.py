@@ -17,7 +17,7 @@ def get_noreads(request):
 
 def follow_user(request):
     if 'fid' not in request.POST or '_token' not in request.POST:
-        return response_of_failure('missing field(s)')
+        return response_of_failure(msg='missing field(s)')
 
     user = get_user(request)
     if isinstance(user, AnonymousUser):
@@ -31,4 +31,22 @@ def follow_user(request):
 
     return response_of_success(msg='success')
 
+
+def get_following_users(request):
+    if '_token' not in request.POST or 'type' not in request.POST:
+        return response_of_failure(msg='missing field(s)')
+    
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+    
+    following_users = user.following_users.all()
+    if request.POST['type'] == '1':
+        following_users = following_users.filter(user_type=1)
+    elif request.POST['type'] == '2':
+        following_users = following_users.filter(user_type=2)
+    else:
+        return response_of_failure(msg='invalid user type')
+
+    return JsonResponse(api_returned_object(info=following_users), encoder=FriendEncoder)
 

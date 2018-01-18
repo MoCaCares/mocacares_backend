@@ -91,10 +91,12 @@ class CommentEncoder(DjangoJSONEncoder):
         return super(CommentEncoder, self).default(obj)
 
 
-
-
-
-
-
+class FriendEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, User):
+            return {
+                
+            }
+        return super(CommentEncoder, self).default(obj)
 
 

@@ -42,20 +42,7 @@ def add_event(request):
 
 
 def delete_event(request):
-    # TODO: Change lines below
-
-
-
-
-    # token = request.POST['_token']
-    # uid = check_token(token)
-    uid = 1
-
-
-
-
-
-    user = User.objects.get(pk=uid)
+    user = get_user(request)
     user_type = user.user_type
     if user_type != 2:
         return JsonResponse({
@@ -72,7 +59,6 @@ def delete_event(request):
         })
     except ObjectDoesNotExist:
         return response_of_failure(msg='event cannot be found')
-
 
 
 def get_event(request):
@@ -98,20 +84,3 @@ def get_event_types(request):
             'img': 'https://www.newstatesman.com/sites/all/themes/creative-responsive-theme/images/new_statesman_events.jpg'
         })
     return JsonResponse(api_returned_object(info=response))
-
-
-
-
-# Helper functions, temporary
-def check_token(token):
-    auth_str = auth_code_de(token, 'apiToken')
-    auth_arr = auth_str.split('|')
-    uid = auth_arr[0]
-    return 1
-
-
-def auth_code_de(string, key):
-    # TODO: To implement
-    pass
-
-

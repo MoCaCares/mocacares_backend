@@ -30,8 +30,14 @@ class EventSummaryEncoder(DjangoJSONEncoder):
         if isinstance(obj, Event):
             return {
                 "id": obj.pk,
-                "start_time": format_datetime(obj.start_time),
-                "end_time": format_datetime(obj.end_time),
+                "aid": obj.pk,
+                # "start_time": format_datetime(obj.start_time),
+                # "end_time": format_datetime(obj.end_time),
+                'week': '1',
+                'begin_time': '2018-1-12',
+                'hour_start': '10:12:12',
+                'hour_end': '10:14:12',
+                'time_type': '1',
                 "content": "hellodhjsds",
                 "title": obj.title,
                 "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
@@ -48,8 +54,14 @@ class EventDetailEncoder(DjangoJSONEncoder):
         if isinstance(obj, Event):
             return {
                 "id": obj.pk,
-                "start_time": format_datetime(obj.start_time),
-                "end_time": format_datetime(obj.end_time),
+                "aid": obj.pk,
+                # "start_time": format_datetime(obj.start_time),
+                # "end_time": format_datetime(obj.end_time),
+                'week': '1',
+                'begin_time': '2018-1-12',
+                'hour_start': '10:12:12',
+                'hour_end': '10:14:12',
+                'time_type': '1',
                 "title": obj.title,
                 "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
                 "desrc": obj.description,

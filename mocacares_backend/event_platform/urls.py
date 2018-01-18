@@ -8,8 +8,12 @@ urlpatterns = [
 
     url(r'^api/event/commentAdd', views.post_comment),
 
+    url(r'^api/event/eventDel', views.delete_event),
+
+    url(r'^api/event/eventAdd', views.add_event),
+
     url(r'^api/event/eventList', views.get_events),
-    
+
     url(r'^api/event/eventRecommend', views.get_recommended_events),
 
     url(r'^api/event/eventTypeList', views.get_event_types),
@@ -23,9 +27,9 @@ urlpatterns = [
     url(r'^api/event/eventMyPublish', views.get_published_events),
 
     url(r'^api/users/userInfoGet', views.get_user_info),
-    
+
     url(r'^api/users/userSpace', views.get_user_space),
-    
+
     url(r'^api/login/register', views.user_register),
 
     url(r'^api/login/login', views.user_login),

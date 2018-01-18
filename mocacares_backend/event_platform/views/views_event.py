@@ -33,8 +33,18 @@ def get_events(request):
         events = events.filter(event_type=event_type)
     if search_key is not None:
         events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
-    
+
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
+
+
+def add_event(request):
+    print('add')
+    pass
+
+
+def delete_event(request):
+    # uid =
+    pass
 
 
 def get_event(request):
@@ -43,7 +53,7 @@ def get_event(request):
         event = Event.objects.get(pk=event_id)
         return JsonResponse({
             'code': 1,
-            'msg': '', 
+            'msg': '',
             'info': event
         }, encoder=EventDetailEncoder)
     except ObjectDoesNotExist:
@@ -64,7 +74,9 @@ def get_event_types(request):
 
 
 
-
+# Helper functions, temporary
+def check_token():
+    pass
 
 
 

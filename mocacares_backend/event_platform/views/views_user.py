@@ -60,12 +60,18 @@ def user_register(request):
     try:
         new_user = User(username=username, email_address=email, password=password, user_type=user_type)
         new_user.save()
+
+        new_session = SessionStore()
+        new_session.create()
+        request.session = new_session
+        request.session.modified = True
+        print(request.session.session_key)
+
         login(request, new_user)
-        user_session_key = request.session.session_key
         return JsonResponse({
             'code': 1,
             'info': {
-                '_token': user_session_key,
+                '_token': request.session.session_key,
             },
             'msg': 'login success'
         })

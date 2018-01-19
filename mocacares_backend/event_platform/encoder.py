@@ -70,8 +70,7 @@ class EventDetailEncoder(DjangoJSONEncoder):
                 "type": obj.event_type.pk, 
                 "t_name": obj.event_type.name,
                 "uid": obj.poster.pk,
-                "u_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
-
+                'u_img': 'https://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=85495748'
             }
         return super(EventDetailEncoder, self).default(obj)
 
@@ -86,7 +85,7 @@ class CommentEncoder(DjangoJSONEncoder):
                 "content": obj.content,
                 "c_time": format_datetime(obj.post_time),  # "0000-00-00 00:00:00"
                 "u_username": obj.poster.username,
-                "u_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
+                'u_img': 'https://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=85495748'
             }
         return super(CommentEncoder, self).default(obj)
 
@@ -95,8 +94,12 @@ class FriendEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, User):
             return {
-                
+                'id': obj.pk,
+                'uid': obj.pk,
+                'fid': obj.pk,
+                'u_username': obj.username,
+                'u_img': 'https://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=85495748'
             }
-        return super(CommentEncoder, self).default(obj)
+        return super(FriendEncoder, self).default(obj)
 
 

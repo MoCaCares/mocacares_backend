@@ -15,7 +15,7 @@ def get_noreads(request):
     }))
 
 
-def follow_user(request):
+def follow_or_unfollow_user(request):
     if 'fid' not in request.POST or '_token' not in request.POST:
         return response_of_failure(msg='missing field(s)')
 
@@ -25,7 +25,10 @@ def follow_user(request):
 
     try:
         target_user = User.objects.get(pk=request.POST['fid'])
-        user.following_users.add(target_user)
+        if target_user in user.following_users.all():
+            user.following_users.remove(target_user)
+        else:
+            user.following_users.add(target_user)
     except ObjectDoesNotExist:
         return response_of_failure(msg='target user not found')
 
@@ -48,5 +51,5 @@ def get_following_users(request):
     else:
         return response_of_failure(msg='invalid user type')
 
-    return JsonResponse(api_returned_object(info=following_users), encoder=FriendEncoder)
+    return JsonResponse(api_returned_object(info=list(following_users)), encoder=FriendEncoder)
 

@@ -14,6 +14,13 @@ def get_comments(request):
     return response_of_failure(msg='Event ID not given')
 
 
+def get_my_comments(request):
+    user = get_user(request)
+    comments = Comment.objects.all()
+    my_comments = comments.filter(poster=user)
+    return JsonResponse(api_returned_object(info=list(my_comments)), encoder=CommentEncoder)
+
+
 def get_events(request):
     page = 1
     event_type = None

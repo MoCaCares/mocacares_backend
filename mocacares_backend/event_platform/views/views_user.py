@@ -60,12 +60,18 @@ def user_register(request):
     try:
         new_user = User(username=username, email_address=email, password=password, user_type=user_type)
         new_user.save()
+
+        new_session = SessionStore()
+        new_session.create()
+        request.session = new_session
+        request.session.modified = True
+        print(request.session.session_key)
+
         login(request, new_user)
-        user_session_key = request.session.session_key
         return JsonResponse({
             'code': 1,
             'info': {
-                '_token': user_session_key,
+                '_token': request.session.session_key,
             },
             'msg': 'login success'
         })
@@ -97,7 +103,7 @@ def get_user_space(request):
         
         target_user_space_json = {}
         target_user_space_json['user'] = target_user_json
-        target_user_space_json['event'] = []  # TODO: to be set accordingly
+        target_user_space_json['event'] = list(target_user.participated_event_set.all())
 
         if target_user in user.follower_set.all():
             target_user_space_json['is_friend'] = '1'
@@ -106,7 +112,7 @@ def get_user_space(request):
     except ObjectDoesNotExist:
         return response_of_failure(msg='target user not found')
 
-    return JsonResponse(api_returned_object(info=target_user_space_json))
+    return JsonResponse(api_returned_object(info=target_user_space_json), encoder=EventSummaryEncoder)
 
 
 

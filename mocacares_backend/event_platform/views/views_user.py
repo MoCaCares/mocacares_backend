@@ -103,7 +103,7 @@ def get_user_space(request):
         
         target_user_space_json = {}
         target_user_space_json['user'] = target_user_json
-        target_user_space_json['event'] = []  # TODO: to be set accordingly
+        target_user_space_json['event'] = list(target_user.participated_event_set.all())
 
         if target_user in user.follower_set.all():
             target_user_space_json['is_friend'] = '1'
@@ -112,7 +112,7 @@ def get_user_space(request):
     except ObjectDoesNotExist:
         return response_of_failure(msg='target user not found')
 
-    return JsonResponse(api_returned_object(info=target_user_space_json))
+    return JsonResponse(api_returned_object(info=target_user_space_json), encoder=EventSummaryEncoder)
 
 
 

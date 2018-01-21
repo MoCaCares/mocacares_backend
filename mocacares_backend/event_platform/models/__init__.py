@@ -12,7 +12,7 @@ class UploadedImage(models.Model):
 
 
 @receiver(models.signals.pre_delete, sender=UploadedImage)
-def delete_local_portrait(sender, instance, **kwargs):
+def delete_local_file(sender, instance, **kwargs):
     """
     delete the corresponding image file
     """

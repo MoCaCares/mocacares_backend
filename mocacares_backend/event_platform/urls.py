@@ -23,6 +23,10 @@ urlpatterns = [
 
     url(r'^api/event/commentList', views.get_comments),
 
+    url(r'^api/event/commentMy', views.get_my_comments),
+
+    url(r'^api/public/systemConfig', views.update_system_config),
+
     url(r'^api/event/eventBook', views.book_event),
 
     url(r'^api/event/eventMyBook', views.get_booked_events),

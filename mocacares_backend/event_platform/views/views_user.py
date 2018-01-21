@@ -60,6 +60,8 @@ def user_register(request):
     try:
         new_user = User(username=username, email_address=email, password=password, user_type=user_type)
         new_user.save()
+        new_system_config = SystemConfig(target_user=new_user)
+        new_system_config.save()
 
         new_session = SessionStore()
         new_session.create()
@@ -100,7 +102,7 @@ def get_user_space(request):
         target_user_json = UserInfoEncoder().default(target_user)
         target_user_json['statement'] = 'to be add'
         target_user_json['occupation'] = 'to be add'
-        
+
         target_user_space_json = {}
         target_user_space_json['user'] = target_user_json
         target_user_space_json['event'] = list(target_user.participated_event_set.all())

@@ -14,6 +14,58 @@ def get_comments(request):
     return response_of_failure(msg='Event ID not given')
 
 
+def get_my_comments(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to view your comments.')
+
+    my_comments = Comment.objects.filter(poster=user)
+    return JsonResponse(api_returned_object(info=list(my_comments)), encoder=CommentEncoder)
+
+
+def update_system_config(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to update your preferences.')
+
+    recommend = request.POST.get('recommend', None)
+    if recommend not in ['1', '2', '3', '4']:
+        return response_of_failure(msg='Invalid setting value')
+    notify = request.POST.get('notify', None)
+    if notify not in ['1', '2']:
+        return response_of_failure(msg='Invalid setting value')
+    receive = request.POST.get('receive', None)
+    if receive not in ['1']:
+        return response_of_failure(msg='Invalid setting value')
+
+    system_config = SystemConfig.objects.filter(target_user=user).first()
+    if not system_config:
+        system_config = SystemConfig(target_user=user, recommend=recommend, notify=notify, receive=receive)
+        system_config.save()
+        return JsonResponse({
+            'code': 1,
+            'msg': 'Success'
+        })
+
+    if recommend:
+        system_config.recommend = recommend
+    if notify:
+        system_config.notify = notify
+    if receive:
+        system_config.receive = receive
+    system_config.save()
+    return JsonResponse({
+        'code': 1,
+        'msg': 'Success'
+    })
+
+
 def get_events(request):
     page = 1
     event_type = None

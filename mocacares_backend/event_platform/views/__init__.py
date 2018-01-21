@@ -132,7 +132,12 @@ def get_published_events(request):
     }, encoder=EventSummaryEncoder)
 
 
-
+def upload_image(request):
+    if 'filename' not in request.FILES:
+        return response_of_failure(msg='missing field(s)')
+    uploaded_image = UploadedImage(image=request.FILES['filename'])
+    uploaded_image.save()
+    return JsonResponse(api_returned_object(info=uploaded_image.image_url))
 
 
 

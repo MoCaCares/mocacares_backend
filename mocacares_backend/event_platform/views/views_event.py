@@ -87,6 +87,20 @@ def get_events(request):
 
 
 def add_event(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to post an event.')
+
+    if user.user_type != 2:
+        return response_of_failure(msg='No permission')
+
+    required_fields = ['title', 'type', 'time_type', 'desrc']
+    all_fields = ['type', 'title', 'img', 'content', 'desrc', 'add', 'question', 'time_type', 'hour_start', 'hour_end', 'week', 'begin_time']
+
+    import pdb; pdb.set_trace()
     pass
 
 

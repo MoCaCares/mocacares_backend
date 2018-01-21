@@ -15,9 +15,14 @@ def get_comments(request):
 
 
 def get_my_comments(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
     user = get_user(request)
-    comments = Comment.objects.all()
-    my_comments = comments.filter(poster=user)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to view your comments.')
+
+    my_comments = Comment.objects.filter(poster=user)
     return JsonResponse(api_returned_object(info=list(my_comments)), encoder=CommentEncoder)
 
 

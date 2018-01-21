@@ -35,3 +35,8 @@ class Comment(models.Model):
     post_time = models.DateTimeField(auto_now=False, auto_now_add=True)
 
 
+class SystemConfig(models.Model):
+    target_user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    recommend = models.IntegerField(default=1) # 1, 2, 3, 4
+    notify = models.IntegerField(default=1) # 1, 2
+    receive = models.IntegerField(default=1) # 1

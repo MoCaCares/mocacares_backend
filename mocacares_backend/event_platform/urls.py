@@ -1,7 +1,10 @@
 from django.conf.urls import include, url
+from django.conf.urls.static import static
+from django.conf import settings
 from django.urls import path
 
 from . import views
+
 
 urlpatterns = [
     url(r'^api/event/eventDetail', views.get_event),
@@ -35,10 +38,13 @@ urlpatterns = [
     url(r'^api/login/login', views.user_login),
 
     url(r'^api/public/feedback', views.post_feedback),
+    
+    url(r'^api/public/upLoadImg', views.upload_image),
 
     url(r'^api/chat/getNoRead', views.get_noreads),
 
     url(r'^api/chat/friendAdd', views.follow_or_unfollow_user),
 
     url(r'^api/chat/friendList', views.get_following_users),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

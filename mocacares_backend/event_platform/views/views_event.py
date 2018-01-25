@@ -5,6 +5,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 
+from datetime import datetime
+
 
 def get_comments(request):
     if 'aid' in request.POST:
@@ -97,11 +99,37 @@ def add_event(request):
     if user.user_type != 2:
         return response_of_failure(msg='No permission')
 
-    required_fields = ['title', 'type', 'time_type', 'desrc']
-    all_fields = ['type', 'title', 'img', 'content', 'desrc', 'add', 'question', 'time_type', 'hour_start', 'hour_end', 'week', 'begin_time']
+    required_keys = ['title', 'type', 'time_type', 'desrc', 'hour_start', 'hour_end', 'begin_time']
+    if not all([field in request.POST for field in required_keys]):
+        return response_of_failure('Invalid event')
 
-    import pdb; pdb.set_trace()
-    pass
+    all_keys = ['type', 'title', 'img', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
+
+    begin_time = request.POST['begin_time']
+    hour_start = request.POST['hour_start']
+    hour_end = request.POST['hour_end']
+
+    datetime_format = '%Y %A,%d %b %I:%M %p'
+    year_str = str(datetime.now().year)
+    start_time = datetime.strptime(year_str + ' ' + begin_time + ' ' + hour_start, datetime_format)
+    end_time = datetime.strptime(year_str + ' ' + begin_time + ' ' + hour_end, datetime_format)
+
+    key_mapping = {'type': 'event_type_id', 'desrc': 'description', 'add': 'address'}
+
+    new_event = Event()
+    for key in all_keys:
+        value = request.POST.get(key, None)
+        model_key = key_mapping.get(key, None) or key
+        setattr(new_event, model_key, value)
+
+    new_event.start_time = start_time
+    new_event.end_time = end_time
+    new_event.poster_id = user.id
+    new_event.save()
+    return JsonResponse({
+        'code': 1,
+        'msg': 'Success'
+    })
 
 
 def delete_event(request):

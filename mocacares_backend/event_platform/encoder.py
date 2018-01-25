@@ -41,10 +41,10 @@ class EventSummaryEncoder(DjangoJSONEncoder):
                 'time_type': '1',
                 "content": "hellodhjsds",
                 "title": obj.title,
-                "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
+                "img": obj.img[1:],
                 "desrc": obj.description,
                 "add": obj.address,
-                "type": obj.event_type.pk, 
+                "type": obj.event_type.pk,
                 "t_name": obj.event_type.name
             }
         return super(EventSummaryEncoder, self).default(obj)
@@ -64,10 +64,10 @@ class EventDetailEncoder(DjangoJSONEncoder):
                 'hour_end': '10:14:12',
                 'time_type': '1',
                 "title": obj.title,
-                "img": "http://mainstreamevents.homestead.com/Event_Picture.jpg",
+                "img": obj.img[1:],
                 "desrc": obj.description,
                 "add": obj.address,
-                "type": obj.event_type.pk, 
+                "type": obj.event_type.pk,
                 "t_name": obj.event_type.name,
                 "uid": obj.poster.pk,
                 'u_img': 'https://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=85495748'

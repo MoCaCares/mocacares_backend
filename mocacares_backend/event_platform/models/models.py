@@ -13,6 +13,7 @@ class Event(models.Model):
     title = models.CharField(max_length=1028)
     description = models.TextField()
     address = models.TextField()
+    img = models.CharField(max_length=256)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     event_type = models.ForeignKey(EventType, on_delete=models.CASCADE)

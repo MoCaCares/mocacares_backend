@@ -6,6 +6,12 @@ from .models import *
 def format_datetime(datetime):
     return datetime.strftime('%Y-%m-%d %H:%M:%S')
 
+def datetime_to_date_str(datetime):
+    return datetime.strftime('%Y-%m-%d')
+
+def datetime_to_time_str(datetime):
+    return datetime.strftime('%H:%M:%S')
+
 
 class UserInfoEncoder(DjangoJSONEncoder):
     def default(self, obj):
@@ -32,12 +38,10 @@ class EventSummaryEncoder(DjangoJSONEncoder):
             return {
                 "id": obj.pk,
                 "aid": obj.pk,
-                # "start_time": format_datetime(obj.start_time),
-                # "end_time": format_datetime(obj.end_time),
                 'week': '1',
-                'begin_time': '2018-1-12',
-                'hour_start': '10:12:12',
-                'hour_end': '10:14:12',
+                'begin_time': datetime_to_date_str(obj.start_time),
+                'hour_start': datetime_to_time_str(obj.start_time),
+                'hour_end': datetime_to_time_str(obj.end_time),
                 'time_type': '1',
                 "content": "hellodhjsds",
                 "title": obj.title,
@@ -56,12 +60,10 @@ class EventDetailEncoder(DjangoJSONEncoder):
             return {
                 "id": obj.pk,
                 "aid": obj.pk,
-                # "start_time": format_datetime(obj.start_time),
-                # "end_time": format_datetime(obj.end_time),
                 'week': '1',
-                'begin_time': '2018-1-12',
-                'hour_start': '10:12:12',
-                'hour_end': '10:14:12',
+                'begin_time': datetime_to_date_str(obj.start_time),
+                'hour_start': datetime_to_time_str(obj.start_time),
+                'hour_end': datetime_to_time_str(obj.end_time),
                 'time_type': '1',
                 "title": obj.title,
                 "img": obj.img[1:],

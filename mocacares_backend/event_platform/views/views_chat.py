@@ -53,3 +53,7 @@ def get_following_users(request):
 
     return JsonResponse(api_returned_object(info=list(following_users)), encoder=FriendEncoder)
 
+
+def send_message(request):
+    print(request.POST)
+    return response_of_success(msg='success')

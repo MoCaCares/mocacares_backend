@@ -50,6 +50,12 @@ def upload_to(instance, filename):
     return '{0}/{1}/{2}.{3}'.format("portrait", instance.email_address, "portrait", extension)
 
 
+class SystemConfig(models.Model):
+    recommend = models.IntegerField(default=1) # 1, 2, 3, 4
+    notify = models.IntegerField(default=1) # 1, 2
+    receive = models.IntegerField(default=1) # 1
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=254, unique=True)
 
@@ -64,6 +70,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     portrait = models.ImageField(upload_to=upload_to, blank=True, null=True)
 
     user_type = models.IntegerField()  # 1: volunteer; 2: organization
+
+    system_config = models.OneToOneField(SystemConfig, on_delete=models.CASCADE)
 
     @property
     def portrait_url(self):

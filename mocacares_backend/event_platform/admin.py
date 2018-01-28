@@ -26,7 +26,7 @@ class EventTypeModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
 
 class SystemConfigModelAdmin(admin.ModelAdmin):
-    list_display = ['target_user']
+    pass
 
 
 admin.site.register(Session, SessionAdmin)

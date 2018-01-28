@@ -7,6 +7,9 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import get_user, login, authenticate
 from django.db import IntegrityError
 
+import redis
+REDIS_DOMAIN = '0.0.0.0'
+REDIS_PORT = 6379
 
 def get_noreads(request):
     return JsonResponse(api_returned_object(info={
@@ -56,4 +59,78 @@ def get_following_users(request):
 
 def send_message(request):
     print(request.POST)
+    sender = get_user(request)
+    receiver = User.objects.get(pk=request.POST['sid'])
+    message = Message(sender=sender, receiver=receiver, content=request.POST['msg'])
+    message.save()
+    strict_redis = redis.StrictRedis(
+        host=REDIS_DOMAIN,
+        port=REDIS_PORT,
+        db=0
+    )
+    strict_redis.publish('new_messages', MessageEncoder().default(message))
     return response_of_success(msg='success')
+
+
+def get_chat_list(request):
+    print(request.POST)
+    user = get_user(request)
+    other = User.objects.get(pk=request.POST['sid'])
+    messages = Message.objects.filter(Q(sender=user, receiver=other) | Q(sender=other, receiver=user)).order_by('-post_time')
+    return JsonResponse(api_returned_object(info=list(messages)), encoder=MessageEncoder)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# chat_list = [{
+#         "id": "112",
+#         "fid": "1",
+#         "sid": "5",
+#         "msg": "hello",
+#         "c_time": "2017-10-18 11:13:45",
+#         "status": "1",
+#         "f_username": "zdg19932",
+#         "f_img":   "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
+#         "s_username": "123",
+#         "s_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
+#     }, {
+#         "id": "113",
+#         "fid": "1",
+#         "sid": "5",
+#         "msg": "hello\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nhello",
+#         "c_time": "2017-10-18 11:13:46",
+#         "status": "1",
+#         "f_username": "zdg19932",
+#         "f_img":   "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
+#         "s_username": "123",
+#         "s_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
+#     }, {
+#         "id": "114",
+#         "fid": "1",
+#         "sid": "5",
+#         "msg": "hello\n\n\n\n\n\n\n\n\n\n\n\n\nhello",
+#         "c_time": "2017-10-18 11:13:47",
+#         "status": "1",
+#         "f_username": "zdg19932",
+#         "f_img":   "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
+#         "s_username": "123",
+#         "s_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
+#     }]

@@ -1,24 +1,70 @@
-var http = require('http');
-var server = http.createServer().listen(4000);
-var io = require('socket.io').listen(server);
-
-// var redis = require('redis');
-// var sub = redis.createClient();
-
+var redis = require('redis');
+var sub = redis.createClient();
 //Subscribe to the Redis chat channel
-// sub.subscribe('new_messages');
+sub.subscribe('new_messages');
+
+var net = require('net');
+
+var HOST = '0.0.0.0';
+var PORT = 4000;
 
 
-io.sockets.on('connection', function (socket) {
-    console.log('connected')
-    socket.emit('news', {
-        hello: 'world'
+var connections = []
+
+
+// Create a server instance, and chain the listen function to it
+// The function passed to net.createServer() becomes the event handler for the 'connection' event
+// The sock object the callback function receives UNIQUE for each connection
+net.createServer(function(sock) {
+    
+    // We have a connection - a socket object is assigned to the connection automatically
+    console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
+    connections.push(sock)
+    
+    sub.on('message', function (channel, message) {
+        message_json = JSON.parse(message.replace(/\'/g, '"'))
+        sock.write(JSON.stringify({
+            code: 2,
+            msg: '聊天信息',
+            info: {
+                "id": String(message_json.id),
+                "fid": String(message_json.fid),
+                "sid": "1",
+                "msg": message_json.msg,
+                "c_time": message_json.c_time,
+                "status": message_json.status,
+                "f_username": message_json.f_username,
+                "f_img": message_json.f_img,
+                "s_username": message_json.s_username,
+                "s_img": message_json.s_img
+            }
+        }))
     });
-    socket.on('my other event', function (data) {
-        console.log(data);
+
+    // Add a 'data' event handler to this instance of socket
+    sock.on('data', function(data) {
+        console.log('DATA ' + sock.remoteAddress + ': ' + data);
+        // Write the data back to the socket, the client will receive it as data from the server
+        sock.write('You said "' + data + '"');
     });
-    // // Grab message from Redis and send to client
-    // sub.on('message', function (channel, message) {
-    //     socket.send(message);
-    // });
-});
+    
+    // Add a 'close' event handler to this instance of socket
+    sock.on('close', function(data) {
+        console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
+    });
+    
+}).listen(PORT, HOST);
+
+console.log('Server listening on ' + HOST +':'+ PORT);
+
+
+
+
+
+
+
+
+
+
+
+

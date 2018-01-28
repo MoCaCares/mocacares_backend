@@ -4,7 +4,6 @@ from ..models import *
 from ..util import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import get_user, login, authenticate
 from django.db import IntegrityError
 
 import redis
@@ -91,46 +90,3 @@ def get_chat_list(request):
 
 
 
-
-
-
-
-
-
-
-
-
-# chat_list = [{
-#         "id": "112",
-#         "fid": "1",
-#         "sid": "5",
-#         "msg": "hello",
-#         "c_time": "2017-10-18 11:13:45",
-#         "status": "1",
-#         "f_username": "zdg19932",
-#         "f_img":   "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
-#         "s_username": "123",
-#         "s_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
-#     }, {
-#         "id": "113",
-#         "fid": "1",
-#         "sid": "5",
-#         "msg": "hello\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nhello",
-#         "c_time": "2017-10-18 11:13:46",
-#         "status": "1",
-#         "f_username": "zdg19932",
-#         "f_img":   "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
-#         "s_username": "123",
-#         "s_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
-#     }, {
-#         "id": "114",
-#         "fid": "1",
-#         "sid": "5",
-#         "msg": "hello\n\n\n\n\n\n\n\n\n\n\n\n\nhello",
-#         "c_time": "2017-10-18 11:13:47",
-#         "status": "1",
-#         "f_username": "zdg19932",
-#         "f_img":   "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",
-#         "s_username": "123",
-#         "s_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"
-#     }]

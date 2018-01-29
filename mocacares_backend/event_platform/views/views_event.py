@@ -1,11 +1,13 @@
 from ..models import *
 from ..encoder import *
 from ..util import *
+from .util import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 
 from datetime import datetime
+import random
 
 
 def get_comments(request):
@@ -168,3 +170,34 @@ def get_event_types(request):
             'img': 'https://www.newstatesman.com/sites/all/themes/creative-responsive-theme/images/new_statesman_events.jpg'
         })
     return JsonResponse(api_returned_object(info=response))
+
+
+def send_verify(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to change password.')
+
+    verification_code = random.randint(0, 99999)
+    verification_code_str = str(verification_code).zfill(5)
+    import pdb; pdb.set_trace()
+    EmailThread(
+        subject = 'MocaCare Verification Code',
+        content = 'Your verification code is {}'.format(verification_code_str),
+        receiver_list = [user.email_address]
+    ).start()
+
+    #TODO: Save pair
+
+    return JsonResponse({
+        'code': 1,
+        'msg': 'Verification code sent successfully.'
+    }, status=200)
+
+
+
+
+def change_pwd(request):
+    pass

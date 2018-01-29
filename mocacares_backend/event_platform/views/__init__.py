@@ -1,11 +1,9 @@
-import threading
-
 from .views_event import *
 from .views_user import *
 from .views_chat import *
+from .util import *
 from ..models import *
 from ..encoder import *
-from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import AnonymousUser
@@ -24,8 +22,8 @@ def post_comment(request):
         return JsonResponse({
             'code': 0,
             'msg': 'You need to log in to post comment'
-        }, status=400) 
-    
+        }, status=400)
+
     event = Event.objects.get(pk=request.POST['aid'])
     comment = Comment(poster=user, target_event=event, content=request.POST['content'])
     comment.save()
@@ -33,29 +31,6 @@ def post_comment(request):
         'code': 1,
         'msg': 'success'
     })
-
-
-class EmailThread(threading.Thread):  # TODO: move to util.py
-    def __init__(self, subject, content, receiver_list):
-        self.subject = subject
-        self.content = content
-        self.receiver_list = receiver_list
-        super(EmailThread, self).__init__()
-    
-    def run(self):
-        # context = {
-        #     'team': self.team,
-        #     'members': self.team.member_set.all(),
-        # }
-        # content = render_to_string('form/team_email.html', context)
-        email = EmailMessage(
-            subject=self.subject,
-            body=self.content,
-            to=self.receiver_list,
-            # cc=['']
-        )
-        # email.content_subtype = "html"
-        email.send(fail_silently=False)
 
 
 def post_feedback(request):

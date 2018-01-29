@@ -4,6 +4,7 @@ from importlib import import_module
 from django.conf import settings
 from django.utils.module_loading import import_string
 from django.http import HttpResponse, JsonResponse
+from random import randint
 
 
 SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
@@ -24,12 +25,12 @@ def get_user(request):
 
     user_id = session['_auth_user_id']
     backend_path = session['_auth_user_backend']
-    
+
     if backend_path in settings.AUTHENTICATION_BACKENDS:
         backend = load_backend(backend_path)
         user = backend.get_user(user_id)
         # TODO: Verify the session
-        
+
     return user or AnonymousUser()
 
 
@@ -55,5 +56,3 @@ def api_returned_object(code='1', msg='', info=''):
         'msg': msg,
         'info': info
     }
-
-

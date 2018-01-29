@@ -50,5 +50,9 @@ urlpatterns = [
     url(r'^api/chat/friendAdd$', views.follow_or_unfollow_user),
 
     url(r'^api/chat/friendList$', views.get_following_users),
+
+    url(r'^api/login/sendVerify$', views.send_verify),
+
+    url(r'^api/users/changePwd$', views.change_pwd)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

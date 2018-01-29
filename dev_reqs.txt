@@ -2,6 +2,7 @@
 django
 python-memcached
 pillow
+redis
 
 ###### development ######
 pylint  # coding style

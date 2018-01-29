@@ -4,9 +4,11 @@ from ..models import *
 from ..util import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import get_user, login, authenticate
 from django.db import IntegrityError
 
+import redis
+REDIS_DOMAIN = '0.0.0.0'
+REDIS_PORT = 6379
 
 def get_noreads(request):
     return JsonResponse(api_returned_object(info={
@@ -52,4 +54,38 @@ def get_following_users(request):
         return response_of_failure(msg='invalid user type')
 
     return JsonResponse(api_returned_object(info=list(following_users)), encoder=FriendEncoder)
+
+
+def send_message(request):
+    sender = get_user(request)
+    receiver = User.objects.get(pk=request.POST['sid'])
+    message = Message(sender=sender, receiver=receiver, content=request.POST['msg'])
+    message.save()
+    strict_redis = redis.StrictRedis(
+        host=REDIS_DOMAIN,
+        port=REDIS_PORT,
+        db=0
+    )
+    strict_redis.publish('new_message', MessageEncoder().default(message))
+    return response_of_success(msg='success')
+
+
+def get_chat_list(request):
+    print(request.POST)
+    user = get_user(request)
+    other = User.objects.get(pk=request.POST['sid'])
+    messages = Message.objects.filter(Q(sender=user, receiver=other) | Q(sender=other, receiver=user)).order_by('-post_time')
+    return JsonResponse(api_returned_object(info=list(messages)), encoder=MessageEncoder)
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -4,7 +4,7 @@ from ..models import *
 from ..util import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import get_user, login, authenticate
+from django.contrib.auth import login, authenticate
 from django.db import IntegrityError
 
 
@@ -19,6 +19,15 @@ def _validate_email_format(email):
 def _validate_password_format(password):
     return len(password) >= 6
 
+import redis
+REDIS_DOMAIN = '0.0.0.0'
+REDIS_PORT = 6379
+
+strict_redis = redis.StrictRedis(
+    host=REDIS_DOMAIN,
+    port=REDIS_PORT,
+    db=0
+)
 
 def user_login(request):
     input_email_address = request.POST['email']
@@ -27,13 +36,15 @@ def user_login(request):
     if user is not None:
         if user.is_active:
             login(request, user)
-            user_session_key = request.session.session_key
+            if request.session.session_key is None:
+                request.session.save()
+            print('login: ' + str(request.session.session_key))
             return JsonResponse({
                 'code': 1,
                 'info': {
-                    '_token': user_session_key,
+                    '_token': request.session.session_key,
                 },
-                'msg': 'login success'
+                'msg': 'logi success'
             })
         else:
             return response_of_failure('account is not active')
@@ -58,7 +69,8 @@ def user_register(request):
         return response_of_failure('unexisting user type')
 
     try:
-        new_user = User(username=username, email_address=email, password=password, user_type=user_type)
+        new_user = User(username=username, email_address=email, user_type=user_type)
+        new_user.set_password(password)
         new_user.save()
         new_system_config = SystemConfig(target_user=new_user)
         new_system_config.save()
@@ -67,7 +79,7 @@ def user_register(request):
         new_session.create()
         request.session = new_session
         request.session.modified = True
-        print(request.session.session_key)
+        print('register: ' + str(request.session.session_key))
 
         login(request, new_user)
         return JsonResponse({

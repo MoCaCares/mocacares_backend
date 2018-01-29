@@ -46,14 +46,7 @@ def update_system_config(request):
     if receive not in ['1']:
         return response_of_failure(msg='Invalid setting value')
 
-    system_config = SystemConfig.objects.filter(target_user=user).first()
-    if not system_config:
-        system_config = SystemConfig(target_user=user, recommend=recommend, notify=notify, receive=receive)
-        system_config.save()
-        return JsonResponse({
-            'code': 1,
-            'msg': 'Success'
-        })
+    system_config = user.system_config
 
     if recommend:
         system_config.recommend = recommend

@@ -58,10 +58,10 @@ def user_register(request):
         return response_of_failure('unexisting user type')
 
     try:
-        new_user = User(username=username, email_address=email, password=password, user_type=user_type)
-        new_user.save()
-        new_system_config = SystemConfig(target_user=new_user)
+        new_system_config = SystemConfig()
         new_system_config.save()
+        new_user = User(username=username, email_address=email, password=password, user_type=user_type, system_config=new_system_config)
+        new_user.save()
 
         new_session = SessionStore()
         new_session.create()

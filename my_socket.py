@@ -7,7 +7,7 @@ subscriber = redis.StrictRedis(
     port=REDIS_PORT,
     db=0
 ).pubsub()  
-subscriber.subscribe(['new_messages'])
+subscriber.subscribe(['new_message'])
 
 
 # import socketserver

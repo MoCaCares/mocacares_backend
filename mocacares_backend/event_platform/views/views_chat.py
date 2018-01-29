@@ -57,7 +57,6 @@ def get_following_users(request):
 
 
 def send_message(request):
-    print(request.POST)
     sender = get_user(request)
     receiver = User.objects.get(pk=request.POST['sid'])
     message = Message(sender=sender, receiver=receiver, content=request.POST['msg'])
@@ -67,7 +66,7 @@ def send_message(request):
         port=REDIS_PORT,
         db=0
     )
-    strict_redis.publish('new_messages', MessageEncoder().default(message))
+    strict_redis.publish('new_message', MessageEncoder().default(message))
     return response_of_success(msg='success')
 
 

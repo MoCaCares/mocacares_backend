@@ -17,3 +17,8 @@ def delete_local_file(sender, instance, **kwargs):
     delete the corresponding image file
     """
     instance.image.delete()
+
+
+class TokenVerificationPair(models.Model):
+    token = models.CharField(max_length=32)
+    verification_code = models.CharField(max_length=5)

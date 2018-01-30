@@ -182,14 +182,16 @@ def send_verify(request):
 
     verification_code = random.randint(0, 99999)
     verification_code_str = str(verification_code).zfill(5)
-    import pdb; pdb.set_trace()
+
+    save_token_vericode_pair(token=request.POST['_token'], verification_code=verification_code_str)
+
     EmailThread(
         subject = 'MocaCare Verification Code',
         content = 'Your verification code is {}'.format(verification_code_str),
         receiver_list = [user.email_address]
     ).start()
 
-    #TODO: Save pair
+    #TODO: Image OneToOne
 
     return JsonResponse({
         'code': 1,
@@ -200,4 +202,43 @@ def send_verify(request):
 
 
 def change_pwd(request):
-    pass
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to change password.')
+
+    if 'verify' not in request.POST:
+        return response_of_failure(msg='Verification code not provided.')
+
+    if 'newpwd' not in request.POST:
+        return response_of_failure(msg='New password not provided.')
+
+    verification_code = request.POST['verify']
+    new_pwd = request.POST['newpwd']
+    token = request.POST['_token']
+
+    if token_vericode_pair_exists(token=token, verification_code=verification_code):
+        return JsonResponse({
+            'code': 1,
+            'msg': 'Password changed successfully.'
+        }, status=200)
+    else:
+        return response_of_failure(msg='Invalid token or verification code.')
+
+
+
+# Temp
+
+def save_token_vericode_pair(token, verification_code):
+    pair = TokenVerificationPair(token=token, verification_code=verification_code)
+    pair.save()
+
+
+def token_vericode_pair_exists(token, verification_code):
+    pair = TokenVerificationPair.objects.filter(token=token, verification_code=verification_code)
+    if pair:
+        pair[0].delete()
+        return True
+    return False

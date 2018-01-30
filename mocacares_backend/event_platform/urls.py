@@ -53,6 +53,6 @@ urlpatterns = [
 
     url(r'^api/login/sendVerify$', views.send_verify),
 
-    url(r'^api/users/changePwd$', views.change_pwd)
+    url(r'^api/login/changePwd$', views.change_pwd)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

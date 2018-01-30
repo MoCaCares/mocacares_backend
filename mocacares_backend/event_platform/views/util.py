@@ -22,6 +22,3 @@ class EmailThread(threading.Thread):  # TODO: move to util.py
         )
         # email.content_subtype = "html"
         email.send(fail_silently=False)
-
-class VerificationCodeInterface():
-    pass

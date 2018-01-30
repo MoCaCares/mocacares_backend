@@ -56,3 +56,4 @@ def api_returned_object(code='1', msg='', info=''):
         'msg': msg,
         'info': info
     }
+

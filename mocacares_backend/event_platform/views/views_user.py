@@ -1,23 +1,11 @@
 from .views_event import *
-from .views_user import *
 from ..models import *
 from ..util import *
+from .util import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import get_user, login, authenticate
 from django.db import IntegrityError
-
-
-def _validate_user_type(user_type):
-    return user_type == '1' or user_type == '2'
-
-
-def _validate_email_format(email):
-    return True
-
-
-def _validate_password_format(password):
-    return len(password) >= 6
 
 
 def user_login(request):
@@ -50,11 +38,11 @@ def user_register(request):
     password = form['password']
     user_type = form['type']
 
-    if not _validate_email_format(email):
+    if not validate_email_format(email):
         return response_of_failure('incorrect email address format')
-    if not _validate_password_format(password):
+    if not validate_password_format(password):
         return response_of_failure('password must contain at least 6 digits')
-    if not _validate_user_type(user_type):
+    if not validate_user_type(user_type):
         return response_of_failure('unexisting user type')
 
     try:

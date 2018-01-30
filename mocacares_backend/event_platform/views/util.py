@@ -1,6 +1,7 @@
 import threading
 from django.core.mail import EmailMessage
 
+
 class EmailThread(threading.Thread):  # TODO: move to util.py
     def __init__(self, subject, content, receiver_list):
         self.subject = subject
@@ -22,3 +23,14 @@ class EmailThread(threading.Thread):  # TODO: move to util.py
         )
         # email.content_subtype = "html"
         email.send(fail_silently=False)
+
+def validate_user_type(user_type):
+    return user_type == '1' or user_type == '2'
+
+
+def validate_email_format(email):
+    return True
+
+
+def validate_password_format(password):
+    return len(password) >= 6

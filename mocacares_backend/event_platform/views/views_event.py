@@ -180,10 +180,12 @@ def send_verify(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in to change password.')
 
+    token = request.POST['_token']
+
     verification_code = random.randint(0, 99999)
     verification_code_str = str(verification_code).zfill(5)
 
-    save_token_vericode_pair(token=request.POST['_token'], verification_code=verification_code_str)
+    save_token_vericode_pair(token=token, verification_code=verification_code_str)
 
     EmailThread(
         subject = 'MocaCare Verification Code',
@@ -197,8 +199,6 @@ def send_verify(request):
         'code': 1,
         'msg': 'Verification code sent successfully.'
     }, status=200)
-
-
 
 
 def change_pwd(request):
@@ -219,26 +219,37 @@ def change_pwd(request):
     new_pwd = request.POST['newpwd']
     token = request.POST['_token']
 
-    if token_vericode_pair_exists(token=token, verification_code=verification_code):
-        return JsonResponse({
-            'code': 1,
-            'msg': 'Password changed successfully.'
-        }, status=200)
-    else:
+    if not token_vericode_pair_exists(token=token, verification_code=verification_code):
         return response_of_failure(msg='Invalid token or verification code.')
+
+    if not validate_password_format(new_pwd):
+        return response_of_failure(msg='password must contain at least 6 digits')
+    user.password = new_pwd
+    user.save()
+
+    return JsonResponse({
+        'code': 1,
+        'msg': 'Password changed successfully.'
+    }, status=200)
 
 
 
 # Temp
 
 def save_token_vericode_pair(token, verification_code):
-    pair = TokenVerificationPair(token=token, verification_code=verification_code)
-    pair.save()
+    query = TokenVerificationPair.objects.filter(token=token)
+    if query:
+        pair = query[0]
+        pair.verification_code = verification_code
+        pair.save()
+    else:
+        pair = TokenVerificationPair(token=token, verification_code=verification_code)
+        pair.save()
 
 
-def token_vericode_pair_exists(token, verification_code):
-    pair = TokenVerificationPair.objects.filter(token=token, verification_code=verification_code)
-    if pair:
-        pair[0].delete()
+def token_vericode_pair_exists(token, verification_code=None):
+    query = TokenVerificationPair.objects.filter(token=token, verification_code=verification_code)
+    if query:
+        query[0].delete()
         return True
     return False

@@ -224,7 +224,7 @@ def change_pwd(request):
 
     if not validate_password_format(new_pwd):
         return response_of_failure(msg='password must contain at least 6 digits')
-    user.password = new_pwd
+    user.set_password(new_pwd)
     user.save()
 
     return JsonResponse({

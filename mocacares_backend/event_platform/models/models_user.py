@@ -10,6 +10,12 @@ from django.utils.translation import ugettext_lazy as _
 
 
 
+class SystemConfig(models.Model):
+    recommend = models.IntegerField(default=1) # 1, 2, 3, 4
+    notify = models.IntegerField(default=1) # 1, 2
+    receive = models.IntegerField(default=1) # 1
+
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -34,6 +40,9 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('user_type', 2)
+        config = SystemConfig()
+        config.save()
+        extra_fields.setdefault('system_config', config)
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -48,12 +57,6 @@ def upload_to(instance, filename):
     # if a user with sign-in email = user@email.com uploads file name.png
     # the file will be store at media/portrait/user@email.com/portrait.png
     return '{0}/{1}/{2}.{3}'.format("portrait", instance.email_address, "portrait", extension)
-
-
-class SystemConfig(models.Model):
-    recommend = models.IntegerField(default=1) # 1, 2, 3, 4
-    notify = models.IntegerField(default=1) # 1, 2
-    receive = models.IntegerField(default=1) # 1
 
 
 class User(AbstractBaseUser, PermissionsMixin):

@@ -132,7 +132,7 @@ private_settings.py
 .vscode
 db.sqlite3
 **/media/*
-
+dump.rdb
 
 
 

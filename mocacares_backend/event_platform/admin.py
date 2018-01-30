@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Event, Feedback, Comment, EventType, SystemConfig
+from .models import User, Event, Feedback, Comment, EventType, SystemConfig, Message
 from django.contrib.sessions.models import Session
 
 class SessionAdmin(admin.ModelAdmin):
@@ -28,6 +28,9 @@ class EventTypeModelAdmin(admin.ModelAdmin):
 class SystemConfigModelAdmin(admin.ModelAdmin):
     pass
 
+class MessageModelAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'sender', 'receiver', 'content']
+
 
 admin.site.register(Session, SessionAdmin)
 
@@ -37,6 +40,7 @@ admin.site.register(Feedback, FeedbackModelAdmin)
 admin.site.register(Comment, CommentModelAdmin)
 admin.site.register(EventType, EventTypeModelAdmin)
 admin.site.register(SystemConfig, SystemConfigModelAdmin)
+admin.site.register(Message, MessageModelAdmin)
 
 
 

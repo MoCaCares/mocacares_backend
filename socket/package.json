@@ -1,0 +1,15 @@
+{
+    "name": "socket",
+    "version": "1.0.0",
+    "description": "",
+    "main": "socket.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "royl8",
+    "license": "ISC",
+    "dependencies": {
+        "redis": "^2.8.0",
+        "socket.io": "^2.0.3"
+    }
+}

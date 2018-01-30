@@ -53,6 +53,10 @@ urlpatterns = [
 
     url(r'^api/login/sendVerify$', views.send_verify),
 
-    url(r'^api/login/changePwd$', views.change_pwd)
+    url(r'^api/login/changePwd$', views.change_pwd),
+
+    url(r'^api/chat/sendMsg$', views.send_message),
+
+    url(r'^api/chat/chatList$', views.get_chat_list)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

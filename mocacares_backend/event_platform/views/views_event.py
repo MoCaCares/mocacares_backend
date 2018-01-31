@@ -98,7 +98,7 @@ def add_event(request):
     if not all([field in request.POST for field in required_keys]):
         return response_of_failure('Invalid event')
 
-    all_keys = ['type', 'title', 'img', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
+    all_keys = ['type', 'title', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
 
     begin_time = request.POST['begin_time']
     hour_start = request.POST['hour_start']
@@ -117,9 +117,17 @@ def add_event(request):
         model_key = key_mapping.get(key, None) or key
         setattr(new_event, model_key, value)
 
+    image_url = request.POST['img']
+    imgs = [x for x in UploadedImage.objects.all() if x.image.url == image_url]
+    if not imgs:
+        return response_of_failure(msg='Image does not exist')
+    img = imgs[0]
+
+    new_event.img = img
     new_event.start_time = start_time
     new_event.end_time = end_time
     new_event.poster_id = user.id
+
     new_event.save()
     return JsonResponse({
         'code': 1,

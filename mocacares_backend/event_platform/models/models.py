@@ -57,3 +57,10 @@ class Comment(models.Model):
     target_event = models.ForeignKey(Event, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)  # many Documents to one User
     post_time = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+
+class TokenVerificationPair(models.Model):
+    token = models.CharField(max_length=32)
+    verification_code = models.CharField(max_length=5)
+
+

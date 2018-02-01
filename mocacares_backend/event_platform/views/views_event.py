@@ -241,6 +241,51 @@ def change_pwd(request):
     }, status=200)
 
 
+def get_recommended_events(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to view events.')
+
+    page = request.POST.get('page', 1)
+    event_type = request.POST.get('type', None)
+
+    events = Event.objects.filter(event_type_id__in=event_type)[page:page+6]
+
+    if not events:
+        return response_of_failure(msg='No matching events.')
+
+    return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
+
+
+
+# public function eventRecommend() {
+#     $uid = $this->_checkToken();
+#     $mod = D('Article');
+#     //分类
+# //      $type = json_decode(I('post.type'), true);
+#     $type = I('post.type');
+#     if (!empty($type)) {
+#         $where['type'] = array('IN', $type);
+#     }
+#     //分页
+#     $page = I('post.page');
+#     if (empty($page)) {
+#         $page = 1; //默认分页为1
+#     }
+#     $where['status'] = 1;
+#     $list = $mod->where($where)->page($page, 6)->order('id DESC')->field('id,time_type,hour_start,hour_end,week,begin_time,title,img,desrc,type,add')
+#             ->simpJoin('ArticleType', 'type', 'id', 'name', 't_')
+#             ->select();
+#     if (empty($list)) {
+#         $this->apiReturn(1, 'No match event');
+#     } else {
+#         $this->apiReturn(1, '', $list);
+#     }
+# }
+
 
 # Temp
 

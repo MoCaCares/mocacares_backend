@@ -10,4 +10,4 @@ sudo service apache2 restart
 
 pm2 stop all
 pm2 delete all
-pm2 start socket/socket.js
+pm2 start socket/socket.js -i max

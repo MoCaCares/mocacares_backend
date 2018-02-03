@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Event, Feedback, Comment, EventType, SystemConfig, Message
+from .models import User, Event, Feedback, Comment, EventType, SystemConfig, Message, UploadedImage, TokenVerificationPair
 from django.contrib.sessions.models import Session
 
 class SessionAdmin(admin.ModelAdmin):
@@ -29,8 +29,13 @@ class SystemConfigModelAdmin(admin.ModelAdmin):
     pass
 
 class MessageModelAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'sender', 'receiver', 'content']
+    list_display = ['pk', 'sender', 'receiver', 'content', 'read']
 
+class UploadedImageModelAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'image_url']
+
+class TokenVerificationPairModelAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'token', 'verification_code']
 
 admin.site.register(Session, SessionAdmin)
 
@@ -41,7 +46,8 @@ admin.site.register(Comment, CommentModelAdmin)
 admin.site.register(EventType, EventTypeModelAdmin)
 admin.site.register(SystemConfig, SystemConfigModelAdmin)
 admin.site.register(Message, MessageModelAdmin)
-
+admin.site.register(UploadedImage, UploadedImageModelAdmin)
+admin.site.register(TokenVerificationPair, TokenVerificationPairModelAdmin)
 
 
 

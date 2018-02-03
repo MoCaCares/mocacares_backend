@@ -118,10 +118,10 @@ def add_event(request):
         setattr(new_event, model_key, value)
 
     image_url = request.POST['img']
-    imgs = [x for x in UploadedImage.objects.all() if x.image.url == image_url]
-    if not imgs:
+    try:
+        img = UploadedImage.objects.get(image_url=image_url)
+    except ObjectDoesNotExist:
         return response_of_failure(msg='Image does not exist')
-    img = imgs[0]
 
     new_event.img = img
     new_event.start_time = start_time

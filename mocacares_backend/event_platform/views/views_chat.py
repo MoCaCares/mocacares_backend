@@ -59,7 +59,7 @@ def get_following_users(request):
 def send_message(request):
     sender = get_user(request)
     receiver = User.objects.get(pk=request.POST['sid'])
-    message = Message(sender=sender, receiver=receiver, content=request.POST['msg'])
+    message = Message(sender=sender, receiver=receiver, content=request.POST['msg'], read=False)
     message.save()
     strict_redis = redis.StrictRedis(
         host=REDIS_DOMAIN,
@@ -71,14 +71,36 @@ def send_message(request):
 
 
 def get_chat_list(request):
-    print(request.POST)
     user = get_user(request)
     other = User.objects.get(pk=request.POST['sid'])
     messages = Message.objects.filter(Q(sender=user, receiver=other) | Q(sender=other, receiver=user)).order_by('-post_time')
+    for message in messages:
+        if message.receiver.pk == user.pk and message.read == False:
+            message.read = True
+            message.save()
     return JsonResponse(api_returned_object(info=list(messages)), encoder=MessageEncoder)
 
 
-
+def get_chat_friend(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='missing field(s)')
+    
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+    
+    chat_friends = []
+    for other in User.objects.all():
+        messages = Message.objects.filter(Q(sender=user, receiver=other) | Q(sender=other, receiver=user))
+        if messages.exists():
+            chat_friends.append({
+                'uid': other.pk,
+                'name': other.username,
+                "img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",  # TODO: return the actual image url
+                'statement': 'statement',
+                'no_read': messages.filter(read=False, receiver=user).count(),
+            })
+    return JsonResponse(api_returned_object(info=chat_friends))
 
 
 

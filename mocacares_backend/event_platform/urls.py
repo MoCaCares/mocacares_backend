@@ -57,6 +57,8 @@ urlpatterns = [
 
     url(r'^api/chat/sendMsg$', views.send_message),
 
-    url(r'^api/chat/chatList$', views.get_chat_list)
+    url(r'^api/chat/chatList$', views.get_chat_list),
+
+    url(r'^api/chat/chatFriend$', views.get_chat_friend),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

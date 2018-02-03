@@ -29,7 +29,7 @@ class SystemConfigModelAdmin(admin.ModelAdmin):
     pass
 
 class MessageModelAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'sender', 'receiver', 'content']
+    list_display = ['pk', 'sender', 'receiver', 'content', 'read']
 
 class UploadedImageModelAdmin(admin.ModelAdmin):
     list_display = ['pk', 'image_url']

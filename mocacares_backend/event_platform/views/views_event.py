@@ -249,9 +249,11 @@ def get_recommended_events(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in to view events.')
 
-    page = int(request.POST.get('page', 0))
+    page = int(request.POST.get('page', 1)) - 1
     page_end = page + 6
     event_type = request.POST.get('type', None)
+
+    print(event_type)
 
     events = Event.objects.filter(event_type_id__in=event_type)[page:page_end]\
              if event_type else\

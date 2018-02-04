@@ -32,6 +32,17 @@ class UserInfoEncoder(DjangoJSONEncoder):
         return super(UserInfoEncoder, self).default(obj)
 
 
+class EventTypeEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, EventType):
+            return {
+                'id': obj.pk,
+                'name': obj.name,
+                'img': obj.img.image_url[1:]
+            }
+        return super(EventTypeEncoder, self).default(obj)
+
+
 class EventSummaryEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, Event):

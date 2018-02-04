@@ -26,6 +26,7 @@ def delete_local_file(sender, instance, **kwargs):
 
 class EventType(models.Model):
     name = models.TextField()
+    img = models.OneToOneField(UploadedImage, on_delete=models.CASCADE)
 
 
 class Event(models.Model):
@@ -42,7 +43,7 @@ class Event(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description
-    
+
     def delete(self, *args, **kwargs):
         self.img.delete()
         super(Event, self).delete(*args, **kwargs)

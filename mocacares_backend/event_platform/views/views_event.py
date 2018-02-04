@@ -169,15 +169,8 @@ def get_event(request):
 
 
 def get_event_types(request):
-    event_types = list(EventType.objects.all())
-    response = []
-    for event_type in event_types:
-        response.append({
-            'id': event_type.pk,
-            'name': event_type.name,
-            'img': 'https://www.newstatesman.com/sites/all/themes/creative-responsive-theme/images/new_statesman_events.jpg'
-        })
-    return JsonResponse(api_returned_object(info=response))
+    event_types = EventType.objects.all()
+    return JsonResponse(api_returned_object(info=list(event_types)), encoder=EventTypeEncoder)
 
 
 def send_verify(request):

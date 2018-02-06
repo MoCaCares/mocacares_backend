@@ -1,4 +1,5 @@
 # assume in python virtual environment
+pip install -r dev_reqs.txt
 
 python mocacares_backend/manage.py makemigrations
 python mocacares_backend/manage.py migrate

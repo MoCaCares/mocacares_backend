@@ -1,6 +1,7 @@
 ###### production ######
 django
 python-memcached
+django-redis-cache
 pillow
 redis
 

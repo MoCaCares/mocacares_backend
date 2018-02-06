@@ -22,6 +22,9 @@ def get_image_url(uploaded_image):
 
     return uploaded_image.image_url[1:]
 
+def parse_bool_to_int(b):
+    return '1' if b else '0'
+
 
 class UserInfoEncoder(DjangoJSONEncoder):
     def default(self, obj):
@@ -36,8 +39,8 @@ class UserInfoEncoder(DjangoJSONEncoder):
                 "occupation": obj.occupation,
                 "age": obj.age,
                 "sex": obj.gender,
-                "is_show_event": True,
-                "is_show_email": True,  # TODO: set accordingly
+                "is_show_event": parse_bool_to_int(obj.system_config.is_show_events),
+                "is_show_email": parse_bool_to_int(obj.system_config.is_show_email),
             }
         return super(UserInfoEncoder, self).default(obj)
 

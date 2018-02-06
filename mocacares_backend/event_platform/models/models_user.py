@@ -15,6 +15,8 @@ class SystemConfig(models.Model):
     recommend = models.IntegerField(default=1) # 1, 2, 3, 4
     notify = models.IntegerField(default=1) # 1, 2
     receive = models.IntegerField(default=1) # 1
+    is_show_email = models.BooleanField(default=True)
+    is_show_events = models.BooleanField(default=False)
 
 
 class UserManager(BaseUserManager):

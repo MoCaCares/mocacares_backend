@@ -47,10 +47,6 @@ def post_feedback(request):
     }, status=200)
 
 
-def get_recommended_events(request):
-    return HttpResponse(status=200)
-
-
 def book_event(request):
     if 'aid' not in request.POST or '_token' not in request.POST or 'type' not in request.POST:
         return JsonResponse({

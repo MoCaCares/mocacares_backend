@@ -3,17 +3,8 @@ import shutil
 
 from django.dispatch import receiver
 from django.db import models
+from .models_common import UploadedImage
 from .models_user import User
-
-
-class UploadedImage(models.Model):
-    image = models.ImageField()
-    image_url = models.TextField()
-
-    def save(self, *args, **kwargs):
-        super(UploadedImage, self).save(*args, **kwargs) # Call the "real" save() method.
-        self.image_url = self.image.url
-        super(UploadedImage, self).save(*args, **kwargs) # Call the "real" save() method.
 
 
 @receiver(models.signals.pre_delete, sender=UploadedImage)
@@ -25,7 +16,8 @@ def delete_local_file(sender, instance, **kwargs):
 
 
 class EventType(models.Model):
-    name = models.TextField()
+    name = models.TextField(null=True, blank=True)
+    img = models.OneToOneField(UploadedImage, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Event(models.Model):
@@ -42,7 +34,7 @@ class Event(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description
-    
+
     def delete(self, *args, **kwargs):
         self.img.delete()
         super(Event, self).delete(*args, **kwargs)

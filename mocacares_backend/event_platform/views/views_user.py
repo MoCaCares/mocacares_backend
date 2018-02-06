@@ -95,6 +95,32 @@ def get_user_info(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='you need to login first')
     return JsonResponse(api_returned_object(info=user), encoder=UserInfoEncoder)
+    
+
+def set_user_info(request):
+    if '_token' not in request.POST:
+        return response_of_failure('missing field(s)')
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+    print('update user profile:\n' + str(request.POST))
+    if 'username' in request.POST:
+        user.username = request.POST['username']
+    if 'occupation' in request.POST:
+        user.username = request.POST['occupation']
+    if 'statement' in request.POST:
+        user.username = request.POST['statement']
+    if 'age' in request.POST:
+        try:
+            user.username = int(request.POST['age'])
+        except Exception:
+            pass
+    if 'gender' in request.POST:
+        try:
+            user.gender = int(request.POST['sex'])
+        except Exception:
+            pass
+    return response_of_success(msg='update successfully')
 
 
 def get_user_space(request):

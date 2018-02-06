@@ -77,6 +77,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     system_config = models.OneToOneField(SystemConfig, on_delete=models.CASCADE)
 
+    statement = models.TextField(default='')
+
+    occupation = models.TextField(default='')
+    
+    age = models.IntegerField(default=0)
+
+    gender = models.IntegerField(default=1)
+
     @property
     def portrait_url(self):
         if self.portrait and hasattr(self.portrait, 'url'):

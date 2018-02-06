@@ -31,13 +31,13 @@ class UserInfoEncoder(DjangoJSONEncoder):
                 "username": obj.username,
                 "type": obj.user_type,
                 "img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",  # TODO: return the actual image url
-                "is_show_email": True,  # TODO: set accordingly
                 "email": obj.email_address,
-                "statement": "to be add",
-                "occupation": "to be add",
-                "age": "1",
-                "sex": "1",
-                "is_show_event": False
+                "statement": obj.statement,
+                "occupation": obj.occupation,
+                "age": obj.age,
+                "sex": obj.gender,
+                "is_show_event": True,
+                "is_show_email": True,  # TODO: set accordingly
             }
         return super(UserInfoEncoder, self).default(obj)
 

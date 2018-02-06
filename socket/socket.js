@@ -17,7 +17,7 @@ function inspect() {
     console.log(uidToSocketMap.keys());
 }
 
-function shutdownSocket(clientIpport) {
+function shutdownSocket(sock, clientIpport) {
     if (ipportToUidMap.get(clientIpport) !== undefined) {
         uidToSocketMap.delete(ipportToUidMap.get(clientIpport));
         ipportToUidMap.delete(clientIpport);
@@ -51,14 +51,14 @@ function connectionHandler(sock) {
     // Add a 'close' event handler to this instance of socket
     sock.on('close', function(data) {
         console.log('CLIENT CLOSED: ' + clientIpport);
-        shutdownSocket(clientIpport);
+        shutdownSocket(sock, clientIpport);
         inspect();
     });
 
     sock.setTimeout(1000 * 60 * 10);  // in millisecond
     sock.on('timeout', function() {
         console.log('TIMEOUT and CLOSE: ' + clientIpport);
-        shutdownSocket(clientIpport);
+        shutdownSocket(sock, clientIpport);
         inspect();
     });
 }

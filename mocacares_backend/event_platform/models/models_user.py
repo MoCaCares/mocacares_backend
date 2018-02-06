@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+from .models_common import UploadedImage
 
 
 class SystemConfig(models.Model):
@@ -70,7 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     level = models.IntegerField(default=0)
 
-    portrait = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    portrait = models.OneToOneField(UploadedImage, on_delete=models.CASCADE, null=True, blank=True)
 
     user_type = models.IntegerField()  # 1: volunteer; 2: organization
 

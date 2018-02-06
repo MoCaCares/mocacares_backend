@@ -12,6 +12,16 @@ def datetime_to_date_str(datetime):
 def datetime_to_time_str(datetime):
     return datetime.strftime('%H:%M:%S')
 
+def get_image_url(uploaded_image):
+    empty = ''
+    if not uploaded_image:
+        return empty
+
+    if not uploaded_image.image_url:
+        return empty
+
+    return uploaded_image.image_url[1:]
+
 
 class UserInfoEncoder(DjangoJSONEncoder):
     def default(self, obj):
@@ -38,7 +48,7 @@ class EventTypeEncoder(DjangoJSONEncoder):
             return {
                 'id': obj.pk,
                 'name': obj.name,
-                'img': obj.img.image_url[1:]
+                'img': get_image_url(obj.img)
             }
         return super(EventTypeEncoder, self).default(obj)
 
@@ -56,7 +66,7 @@ class EventSummaryEncoder(DjangoJSONEncoder):
                 'time_type': '1',
                 "content": "hellodhjsds",
                 "title": obj.title,
-                "img": obj.img.image_url[1:],
+                "img": get_image_url(obj.img),
                 "desrc": obj.description,
                 "add": obj.address,
                 "type": obj.event_type.pk,
@@ -77,7 +87,7 @@ class EventDetailEncoder(DjangoJSONEncoder):
                 'hour_end': datetime_to_time_str(obj.end_time),
                 'time_type': '1',
                 "title": obj.title,
-                "img": obj.img.image_url[1:],
+                "img": get_image_url(obj.img),
                 "desrc": obj.description,
                 "add": obj.address,
                 "type": obj.event_type.pk,

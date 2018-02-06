@@ -244,17 +244,9 @@ def get_recommended_events(request):
 
     page = int(request.POST.get('page', 1)) - 1
     page_end = page + 6
-    event_type = request.POST.get('type', None)
+    event_type = request.POST.getlist('type[]')
 
-    print(event_type)
-
-    events = Event.objects.filter(event_type_id__in=event_type)[page:page_end]\
-             if event_type else\
-             Event.objects.all()[page:page_end]
-
-    if not events:
-        return response_of_failure(msg='No matching events.')
-
+    events = Event.objects.filter(event_type_id__in=event_type)[page:page_end]
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
 

@@ -62,9 +62,9 @@ def user_register(request):
         new_system_config = SystemConfig()
         new_system_config.save()
         new_user = User(
-            username=username, 
-            email_address=email, 
-            user_type=user_type, 
+            username=username,
+            email_address=email,
+            user_type=user_type,
             system_config=new_system_config
         )
         new_user.set_password(password)

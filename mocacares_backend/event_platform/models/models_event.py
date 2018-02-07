@@ -23,7 +23,7 @@ class EventType(models.Model):
 class Event(models.Model):
     title = models.CharField(max_length=1028)
     description = models.TextField()
-    address = models.TextField()
+    address = models.TextField(null=True, blank=True)
     img = models.OneToOneField(UploadedImage, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()

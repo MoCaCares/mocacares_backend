@@ -101,8 +101,8 @@ def add_event(request):
     all_keys = ['type', 'title', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
 
     begin_time = request.POST['begin_time']
-    hour_start = request.POST['hour_start']
-    hour_end = request.POST['hour_end']
+    hour_start = request.POST['hour_start'].replace('0:', '12:')
+    hour_end = request.POST['hour_end'].replace('0:', '12:')
 
     datetime_format = '%Y %A,%d %b %I:%M %p'
     year_str = str(datetime.now().year)

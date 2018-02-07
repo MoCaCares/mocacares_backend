@@ -51,8 +51,3 @@ class Comment(models.Model):
     post_time = models.DateTimeField(auto_now=False, auto_now_add=True)
 
 
-class TokenVerificationPair(models.Model):
-    token = models.CharField(max_length=32)
-    verification_code = models.CharField(max_length=5)
-
-

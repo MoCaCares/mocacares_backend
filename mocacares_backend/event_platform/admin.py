@@ -26,7 +26,7 @@ class EventTypeModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
 
 class SystemConfigModelAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['pk', 'user', 'is_show_email', 'is_show_events']
 
 class MessageModelAdmin(admin.ModelAdmin):
     list_display = ['pk', 'sender', 'receiver', 'content', 'read']

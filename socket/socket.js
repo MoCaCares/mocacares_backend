@@ -17,6 +17,15 @@ function inspect() {
     console.log(uidToSocketMap.keys());
 }
 
+function shutdownSocket(sock, clientIpport) {
+    if (ipportToUidMap.get(clientIpport) !== undefined) {
+        uidToSocketMap.delete(ipportToUidMap.get(clientIpport));
+        ipportToUidMap.delete(clientIpport);
+    }
+    sock.end();
+    sock.destroy();
+}
+
 
 function connectionHandler(sock) {
     // We have a connection - a socket object is assigned to the connection automatically
@@ -42,24 +51,14 @@ function connectionHandler(sock) {
     // Add a 'close' event handler to this instance of socket
     sock.on('close', function(data) {
         console.log('CLIENT CLOSED: ' + clientIpport);
-        if (ipportToUidMap.get(clientIpport) !== undefined) {
-            uidToSocketMap.delete(ipportToUidMap.get(clientIpport));
-            ipportToUidMap.delete(clientIpport);
-        }
-        sock.end();
-        sock.destroy();
+        shutdownSocket(sock, clientIpport);
         inspect();
     });
 
     sock.setTimeout(1000 * 60 * 10);  // in millisecond
     sock.on('timeout', function() {
         console.log('TIMEOUT and CLOSE: ' + clientIpport);
-        if (ipportToUidMap.get(clientIpport) !== undefined) {
-            uidToSocketMap.delete(ipportToUidMap.get(clientIpport));
-            ipportToUidMap.delete(clientIpport);
-        }
-        sock.end();
-        sock.destroy();
+        shutdownSocket(sock, clientIpport);
         inspect();
     });
 }
@@ -92,18 +91,19 @@ sub.on('message', function (channel, message) {
                 "s_img": message_json.s_img
             }
         }));
-    } else if (channel == 'new_login') {
-        message_json = JSON.parse(message.replace(/\'/g, '"'));
-        var uid = parseInt(message_json.uid);
-        var oldUid = parseInt(message_json.old_uid);
-        var sock = uidToSocketMap.get(oldUid);
-        var clientIpport = sock.remoteAddress + ':' + sock.remotePort;
-        ipportToUidMap.set(clientIpport, uid);
-        uidToSocketMap.set(uid, sock); 
-        if (oldUid !== undefined)
-            uidToSocketMap.delete(oldUid);
-        inspect();
-    }
+    } 
+    // else if (channel == 'new_login') {
+    //     message_json = JSON.parse(message.replace(/\'/g, '"'));
+    //     var uid = parseInt(message_json.uid);
+    //     var oldUid = parseInt(message_json.old_uid);
+    //     var sock = uidToSocketMap.get(oldUid);
+    //     var clientIpport = sock.remoteAddress + ':' + sock.remotePort;
+    //     ipportToUidMap.set(clientIpport, uid);
+    //     uidToSocketMap.set(uid, sock); 
+    //     if (oldUid !== undefined)
+    //         uidToSocketMap.delete(oldUid);
+    //     inspect();
+    // }
 });
 
 console.log('Server listening on ' + HOST +':'+ PORT);

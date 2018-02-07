@@ -35,6 +35,8 @@ urlpatterns = [
 
     url(r'^api/users/userInfoGet$', views.get_user_info),
 
+    url(r'^api/users/userInfoSet$', views.set_user_info),
+
     url(r'^api/users/userSpace$', views.get_user_space),
 
     url(r'^api/login/register$', views.user_register),

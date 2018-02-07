@@ -15,6 +15,8 @@ class SystemConfig(models.Model):
     recommend = models.IntegerField(default=1) # 1, 2, 3, 4
     notify = models.IntegerField(default=1) # 1, 2
     receive = models.IntegerField(default=1) # 1
+    is_show_email = models.BooleanField(default=True)
+    is_show_events = models.BooleanField(default=False)
 
 
 class UserManager(BaseUserManager):
@@ -77,6 +79,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     system_config = models.OneToOneField(SystemConfig, on_delete=models.CASCADE)
 
+    statement = models.TextField(default='')
+
+    occupation = models.TextField(default='')
+    
+    age = models.IntegerField(default=0)
+
+    gender = models.IntegerField(default=1)
+
     @property
     def portrait_url(self):
         if self.portrait and hasattr(self.portrait, 'url'):
@@ -133,6 +143,12 @@ def delete_local_portrait(sender, instance, **kwargs):
 
         if os.path.isdir(img_local_dirname):
             shutil.rmtree(img_local_dirname)
+
+
+# TODO:  if scale increase, use redis to store the verification code pair
+class TokenVerificationPair(models.Model):
+    token = models.CharField(max_length=32)
+    verification_code = models.CharField(max_length=5)
 
 
 

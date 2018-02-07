@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class UploadedImage(models.Model):
     image = models.ImageField(null=True, blank=True)
     image_url = models.TextField(null=True, blank=True)

@@ -95,6 +95,49 @@ def get_user_info(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='you need to login first')
     return JsonResponse(api_returned_object(info=user), encoder=UserInfoEncoder)
+    
+
+def set_user_info(request):
+    def parse_boolean(i):
+        if not (i == '1' or i == '0'):
+            return None
+        return True if i == '1' else False
+    
+    if '_token' not in request.POST:
+        return response_of_failure('missing field(s)')
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+
+    print('update user profile:\n' + str(request.POST))
+    if 'username' in request.POST:
+        user.username = request.POST['username']
+    if 'occupation' in request.POST:
+        user.username = request.POST['occupation']
+    if 'statement' in request.POST:
+        user.username = request.POST['statement']
+    if 'age' in request.POST:
+        try:
+            user.username = int(request.POST['age'])
+        except Exception:
+            pass
+    if 'gender' in request.POST:
+        try:
+            user.gender = int(request.POST['sex'])
+        except Exception:
+            pass
+    user.save()
+
+    config = user.system_config
+    if 'is_show_email' in request.POST:
+        if parse_boolean(request.POST['is_show_email']) is not None:
+            config.is_show_email = parse_boolean(request.POST['is_show_email'])
+    if 'is_show_event' in request.POST:
+        if parse_boolean(request.POST['is_show_event']) is not None:
+            config.is_show_events = parse_boolean(request.POST['is_show_event']) 
+    config.save()
+
+    return response_of_success(msg='update successfully')
 
 
 def get_user_space(request):
@@ -107,13 +150,14 @@ def get_user_space(request):
     try:
         target_user = User.objects.get(pk=request.POST['uid'])
         target_user_json = UserInfoEncoder().default(target_user)
-        target_user_json['statement'] = 'to be add'
-        target_user_json['occupation'] = 'to be add'
 
         target_user_space_json = {}
         target_user_space_json['user'] = target_user_json
-        target_user_space_json['event'] = list(target_user.participated_event_set.all())
-
+        if target_user.system_config.is_show_events:
+            target_user_space_json['event'] = list(target_user.participated_event_set.all())
+        else:
+            target_user_space_json['event'] = []
+        
         if target_user in user.follower_set.all():
             target_user_space_json['is_friend'] = '1'
         else:
@@ -121,6 +165,7 @@ def get_user_space(request):
     except ObjectDoesNotExist:
         return response_of_failure(msg='target user not found')
 
+    print(api_returned_object(info=target_user_space_json))
     return JsonResponse(api_returned_object(info=target_user_space_json), encoder=EventSummaryEncoder)
 
 

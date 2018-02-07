@@ -10,9 +10,10 @@ import redis
 REDIS_DOMAIN = '0.0.0.0'
 REDIS_PORT = 6379
 
+
 def get_noreads(request):
     return JsonResponse(api_returned_object(info={
-        'new_msg': '0',
+        'new_msg': '0',  # TODO: calculate and return
         'new_comment': '0'
     }))
 
@@ -57,7 +58,14 @@ def get_following_users(request):
 
 
 def send_message(request):
+    if '_token' not in request.POST or 'sid' not in request.POST or 'msg' not in request.POST:
+        return response_of_failure(msg='missing field(s)')
+    if request.POST['msg'] == '':
+        return response_of_success(msg='empty message is not sent')
     sender = get_user(request)
+    if isinstance(sender, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+    
     receiver = User.objects.get(pk=request.POST['sid'])
     message = Message(sender=sender, receiver=receiver, content=request.POST['msg'], read=False)
     message.save()
@@ -71,7 +79,13 @@ def send_message(request):
 
 
 def get_chat_list(request):
+    if '_token' not in request.POST or 'sid' not in request.POST:
+        return response_of_failure(msg='missing field(s)') 
+
     user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+    
     other = User.objects.get(pk=request.POST['sid'])
     messages = Message.objects.filter(Q(sender=user, receiver=other) | Q(sender=other, receiver=user)).order_by('-post_time')
     for message in messages:

@@ -145,6 +145,12 @@ def delete_local_portrait(sender, instance, **kwargs):
             shutil.rmtree(img_local_dirname)
 
 
+# TODO:  if scale increase, use redis to store the verification code pair
+class TokenVerificationPair(models.Model):
+    token = models.CharField(max_length=32)
+    verification_code = models.CharField(max_length=5)
+
+
 
 
 

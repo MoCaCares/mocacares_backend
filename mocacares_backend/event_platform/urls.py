@@ -1,10 +1,8 @@
-from django.conf.urls import include, url
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls import include, url
 from django.urls import path
 
 from . import views
-
 
 urlpatterns = [
     url(r'^api/event/eventDetail$', views.get_event),
@@ -64,5 +62,4 @@ urlpatterns = [
     url(r'^api/chat/chatFriend$', views.get_chat_friend),
 
     url(r'^get-uid-by-sessionkey$', views.get_uid_by_sessionkey),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+]

@@ -14,7 +14,7 @@ def datetime_to_time_str(datetime):
 
 def get_image_url(uploaded_image):
     default = ''
-    if not uploaded_image or uploaded_image.image_url:
+    if not uploaded_image or not uploaded_image.image_url:
         return default
 
     return uploaded_image.image_url[1:]

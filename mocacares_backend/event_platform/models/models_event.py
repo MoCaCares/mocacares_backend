@@ -27,6 +27,7 @@ class Event(models.Model):
     def __unicode__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description
 
+
 @receiver(models.signals.pre_delete, sender=Event)
 def delete_attaching_image(sender, instance, **kwargs):
     instance.img.delete()

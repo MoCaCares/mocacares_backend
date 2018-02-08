@@ -99,10 +99,16 @@ def add_event(request):
         return response_of_failure('Invalid event')
 
     all_keys = ['type', 'title', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
-
     begin_time = request.POST['begin_time']
-    hour_start = request.POST['hour_start'].replace('0:', '12:')
-    hour_end = request.POST['hour_end'].replace('0:', '12:')
+
+    def change_time_str_format(time_str):
+        hour_min = time_str.split[':']
+        if hour_min[0] == '0':
+            hour_min[0] = '12'
+        return ':'.join(time_str)
+
+    hour_start = change_time_str_format(request.POST['hour_start'])
+    hour_end = change_time_str_format(request.POST['hour_end'])
 
     datetime_format = '%Y %A,%d %b %I:%M %p'
     year_str = str(datetime.now().year)

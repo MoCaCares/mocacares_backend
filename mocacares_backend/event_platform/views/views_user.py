@@ -1,14 +1,14 @@
-from .views_event import *
+import redis
+from django.contrib.auth import authenticate, login
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from django.http import HttpResponse, JsonResponse
+
 from ..models import *
 from ..util import *
 from .util import *
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import login, authenticate
-from django.db import IntegrityError
+from .views_event import *
 
-
-import redis
 REDIS_DOMAIN = '0.0.0.0'
 REDIS_PORT = 6379
 
@@ -251,4 +251,3 @@ def token_vericode_pair_exists(token, verification_code=None):
         query[0].delete()
         return True
     return False
-

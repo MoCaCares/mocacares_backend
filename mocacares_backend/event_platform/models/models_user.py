@@ -73,7 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     level = models.IntegerField(default=0)
 
-    portrait = models.OneToOneField(UploadedImage, on_delete=models.CASCADE, null=True, blank=True)
+    portrait = models.OneToOneField(UploadedImage, on_delete=models.SET_NULL, null=True, blank=True)
 
     user_type = models.IntegerField()  # 1: volunteer; 2: organization
 

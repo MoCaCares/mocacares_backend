@@ -9,6 +9,7 @@
     "author": "royl8",
     "license": "ISC",
     "dependencies": {
+        "axios": "^0.17.1",
         "redis": "^2.8.0",
         "socket.io": "^2.0.3"
     }

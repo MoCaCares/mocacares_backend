@@ -62,5 +62,7 @@ urlpatterns = [
     url(r'^api/chat/chatList$', views.get_chat_list),
 
     url(r'^api/chat/chatFriend$', views.get_chat_friend),
+
+    url(r'^get-uid-by-sessionkey$', views.get_uid_by_sessionkey),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -109,3 +109,11 @@ def upload_image(request):
     uploaded_image = UploadedImage(image=request.FILES['filename'])
     uploaded_image.save()
     return JsonResponse(api_returned_object(info=uploaded_image.image_url))
+
+
+def get_uid_by_sessionkey(request):
+    user = get_user(request)
+    return HttpResponse(str(user.pk))
+
+
+

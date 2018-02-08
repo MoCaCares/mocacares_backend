@@ -5,6 +5,7 @@ sub.subscribe('new_message');
 sub.subscribe('new_login');
 
 var net = require('net');
+var axios = require('axios');
 
 var HOST = '0.0.0.0';
 var PORT = 4000;
@@ -37,14 +38,20 @@ function connectionHandler(sock) {
         console.log('DATA from ' + sock.remoteAddress + ': \n' + data);
         var json = JSON.parse(data);
 
-        if (json.hasOwnProperty('uid')) {
-            var uid = parseInt(json.uid);
-            var oldUid = ipportToUidMap.get(clientIpport);
-            if (oldUid !== undefined)
-                uidToSocketMap.delete(oldUid);
-            ipportToUidMap.set(clientIpport, uid);
-            uidToSocketMap.set(uid, sock);
-            inspect();
+        if (json.hasOwnProperty('sessionKey')) {
+            var sessionKey = json.sessionKey;
+            axios.get('http://0.0.0.0:8000/get-uid-by-sessionkey?_token=' + sessionKey).then(function (res) {
+                console.log(sessionKey + ': ' + res.data);
+                if (res.data == 'None')
+                    return;
+                var uid = parseInt(res.data);
+                var oldUid = ipportToUidMap.get(clientIpport);
+                if (oldUid !== undefined)
+                    uidToSocketMap.delete(oldUid);
+                ipportToUidMap.set(clientIpport, uid);
+                uidToSocketMap.set(uid, sock);
+                inspect();
+            });
         }
     });
     

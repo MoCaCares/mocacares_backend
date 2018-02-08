@@ -34,7 +34,7 @@ def user_login(request):
                 'info': {
                     '_token': request.session.session_key,
                 },
-                'msg': 'logi success'
+                'msg': 'login success'
             })
         else:
             return response_of_failure('account is not active')

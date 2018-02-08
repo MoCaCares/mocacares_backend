@@ -102,10 +102,10 @@ def add_event(request):
     begin_time = request.POST['begin_time']
 
     def change_time_str_format(time_str):
-        hour_min = time_str.split[':']
+        hour_min = time_str.split(':')
         if hour_min[0] == '0':
             hour_min[0] = '12'
-        return ':'.join(time_str)
+        return ':'.join(hour_min)
 
     hour_start = change_time_str_format(request.POST['hour_start'])
     hour_end = change_time_str_format(request.POST['hour_end'])
@@ -139,6 +139,20 @@ def add_event(request):
         'code': 1,
         'msg': 'Success'
     })
+
+
+def edit_event(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='Invalid token')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in to post an event.')
+
+    if user.user_type != 2:
+        return response_of_failure(msg='No permission')
+
+    pass
 
 
 def delete_event(request):

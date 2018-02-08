@@ -13,6 +13,8 @@ urlpatterns = [
 
     url(r'^api/event/eventAdd$', views.add_event),
 
+    url(r'^api/event/eventEdit$', views.edit_event),
+
     url(r'^api/event/eventList$', views.get_events),
 
     url(r'^api/event/eventRecommend$', views.get_recommended_events),

@@ -13,12 +13,9 @@ def datetime_to_time_str(datetime):
     return datetime.strftime('%H:%M:%S')
 
 def get_image_url(uploaded_image):
-    empty = ''
-    if not uploaded_image:
-        return empty
-
-    if not uploaded_image.image_url:
-        return empty
+    default = ''
+    if not uploaded_image or uploaded_image.image_url:
+        return default
 
     return uploaded_image.image_url[1:]
 

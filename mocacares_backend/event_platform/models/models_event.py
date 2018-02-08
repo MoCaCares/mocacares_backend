@@ -7,24 +7,16 @@ from .models_common import UploadedImage
 from .models_user import User
 
 
-@receiver(models.signals.pre_delete, sender=UploadedImage)
-def delete_local_file(sender, instance, **kwargs):
-    """
-    delete the corresponding image file
-    """
-    instance.image.delete(save=False)
-
-
 class EventType(models.Model):
     name = models.TextField(null=True, blank=True)
-    img = models.OneToOneField(UploadedImage, on_delete=models.CASCADE, null=True, blank=True)
+    img = models.OneToOneField(UploadedImage, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 class Event(models.Model):
     title = models.CharField(max_length=1028)
     description = models.TextField()
     address = models.TextField()
-    img = models.OneToOneField(UploadedImage, on_delete=models.CASCADE)
+    img = models.OneToOneField(UploadedImage, on_delete=models.SET_NULL, null=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     event_type = models.ForeignKey(EventType, on_delete=models.CASCADE)
@@ -35,9 +27,9 @@ class Event(models.Model):
     def __unicode__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description
 
-    def delete(self, *args, **kwargs):
-        self.img.delete()
-        super(Event, self).delete(*args, **kwargs)
+@receiver(models.signals.pre_delete, sender=Event)
+def delete_attaching_image(sender, instance, **kwargs):
+    instance.img.delete()
 
 
 class Feedback(models.Model):

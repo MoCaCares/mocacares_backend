@@ -152,7 +152,56 @@ def edit_event(request):
     if user.user_type != 2:
         return response_of_failure(msg='No permission')
 
-    pass
+    required_keys = ['id', 'title', 'type', 'time_type', 'desrc', 'hour_start', 'hour_end', 'begin_time']
+    if not all([field in request.POST for field in required_keys]):
+        return response_of_failure('Invalid event')
+
+    all_keys = ['type', 'title', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
+    begin_time = request.POST['begin_time']
+
+    def change_time_str_format(time_str):
+        hour_min = time_str.split(':')
+        if hour_min[0] == '0':
+            hour_min[0] = '12'
+        return ':'.join(hour_min)
+
+    hour_start = change_time_str_format(request.POST['hour_start'])
+    hour_end = change_time_str_format(request.POST['hour_end'])
+
+    datetime_format = '%Y %A,%d %b %I:%M %p'
+    year_str = str(datetime.now().year)
+    start_time = datetime.strptime(year_str + ' ' + begin_time + ' ' + hour_start, datetime_format)
+    end_time = datetime.strptime(year_str + ' ' + begin_time + ' ' + hour_end, datetime_format)
+
+    key_mapping = {'type': 'event_type_id', 'desrc': 'description', 'add': 'address'}
+
+    event = None
+    try:
+        Event.objects.get(pk=request.POST['id'])
+    except ObjectDoesNotExist:
+        return response_of_failure(msg='Event not found')
+
+    for key in all_keys:
+        value = request.POST.get(key, None)
+        model_key = key_mapping.get(key, None) or key
+        setattr(event, model_key, value)
+
+    image_url = request.POST['img']
+    try:
+        img = UploadedImage.objects.get(image_url=image_url)
+    except ObjectDoesNotExist:
+        return response_of_failure(msg='Image does not exist')
+
+    event.img = img
+    event.start_time = start_time
+    event.end_time = end_time
+    event.poster_id = user.id
+
+    event.save()
+    return JsonResponse({
+        'code': 1,
+        'msg': 'Success'
+    })
 
 
 def delete_event(request):

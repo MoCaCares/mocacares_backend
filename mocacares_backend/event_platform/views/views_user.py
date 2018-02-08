@@ -116,6 +116,8 @@ def set_user_info(request):
         user.username = request.POST['occupation']
     if 'statement' in request.POST:
         user.username = request.POST['statement']
+    if 'img' in request.POST:
+        user.portrait = UploadedImage.objects.get(image_url=request.POST['img'])
     if 'age' in request.POST:
         try:
             user.username = int(request.POST['age'])

@@ -87,13 +87,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     gender = models.IntegerField(default=1)
 
-    @property
-    def portrait_url(self):
-        if self.portrait and hasattr(self.portrait, 'url'):
-            return self.portrait.url
-        else:
-            return "/media/portrait/default_portrait.png"
-
     USERNAME_FIELD = "email_address"
 
     REQUIRED_FIELDS = ["username"]

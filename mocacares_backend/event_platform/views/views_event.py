@@ -152,7 +152,7 @@ def edit_event(request):
     if user.user_type != 2:
         return response_of_failure(msg='No permission')
 
-    required_keys = ['id', 'title', 'type', 'time_type', 'desrc', 'hour_start', 'hour_end', 'begin_time']
+    required_keys = ['aid', 'title', 'type', 'time_type', 'desrc', 'hour_start', 'hour_end', 'begin_time']
     if not all([field in request.POST for field in required_keys]):
         return response_of_failure('Invalid event')
 
@@ -177,7 +177,7 @@ def edit_event(request):
 
     event = None
     try:
-        Event.objects.get(pk=request.POST['id'])
+        Event.objects.get(pk=request.POST['aid'])
     except ObjectDoesNotExist:
         return response_of_failure(msg='Event not found')
 

@@ -1,6 +1,7 @@
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import AnonymousUser
 from .models import *
+from django.utils.encoding import uri_to_iri
 
 
 def format_datetime(datetime):
@@ -13,14 +14,11 @@ def datetime_to_time_str(datetime):
     return datetime.strftime('%H:%M:%S')
 
 def get_image_url(uploaded_image):
-    empty = ''
-    if not uploaded_image:
-        return empty
+    default = ''
+    if not uploaded_image or not uploaded_image.image_url:
+        return default
 
-    if not uploaded_image.image_url:
-        return empty
-
-    return uploaded_image.image_url[1:]
+    return uri_to_iri(uploaded_image.image_url[1:])
 
 def parse_bool_to_int(b):
     return '1' if b else '0'
@@ -96,7 +94,7 @@ class EventDetailEncoder(DjangoJSONEncoder):
                 "type": obj.event_type.pk,
                 "t_name": obj.event_type.name,
                 "uid": obj.poster.pk,
-                "u_img": "https://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=85495748"  # TODO: return the actual image url
+                "u_img": get_image_url(obj.poster.portrait),
             }
         return super(EventDetailEncoder, self).default(obj)
 
@@ -111,7 +109,7 @@ class CommentEncoder(DjangoJSONEncoder):
                 "content": obj.content,
                 "c_time": format_datetime(obj.post_time),  # "0000-00-00 00:00:00"
                 "u_username": obj.poster.username,
-                "u_img": "https://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=85495748"  # TODO: return the actual image url
+                "u_img": get_image_url(obj.poster.portrait),
             }
         return super(CommentEncoder, self).default(obj)
 
@@ -124,7 +122,7 @@ class FriendEncoder(DjangoJSONEncoder):
                 "uid": obj.pk,
                 "fid": obj.pk,
                 "u_username": obj.username,
-                "u_img": "https://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=85495748"  # TODO: return the actual image url
+                "img": get_image_url(obj.portrait),
             }
         return super(FriendEncoder, self).default(obj)
 
@@ -140,9 +138,9 @@ class MessageEncoder(DjangoJSONEncoder):
                 "c_time": format_datetime(obj.post_time),
                 "status": "1",
                 "f_username": obj.sender.username,
-                "f_img":   "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",  # TODO: return the actual image url
+                "f_img": get_image_url(obj.sender.portrait),
                 "s_username": obj.receiver.username,
-                "s_img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683"  # TODO: return the actual image url
+                "s_img": get_image_url(obj.receiver.portrait),
             }
         return super(MessageEncoder, self).default(obj)
 

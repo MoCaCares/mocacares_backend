@@ -73,7 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     level = models.IntegerField(default=0)
 
-    portrait = models.OneToOneField(UploadedImage, on_delete=models.CASCADE, null=True, blank=True)
+    portrait = models.OneToOneField(UploadedImage, on_delete=models.SET_NULL, null=True, blank=True)
 
     user_type = models.IntegerField()  # 1: volunteer; 2: organization
 
@@ -86,13 +86,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     age = models.IntegerField(default=0)
 
     gender = models.IntegerField(default=1)
-
-    @property
-    def portrait_url(self):
-        if self.portrait and hasattr(self.portrait, 'url'):
-            return self.portrait.url
-        else:
-            return "/media/portrait/default_portrait.png"
 
     USERNAME_FIELD = "email_address"
 

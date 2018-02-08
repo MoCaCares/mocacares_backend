@@ -78,6 +78,7 @@ def send_message(request):
     return response_of_success(msg='success')
 
 
+# get message history between the user and another
 def get_chat_list(request):
     if '_token' not in request.POST or 'sid' not in request.POST:
         return response_of_failure(msg='missing field(s)') 

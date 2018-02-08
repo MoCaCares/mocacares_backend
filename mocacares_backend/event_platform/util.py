@@ -20,7 +20,7 @@ def get_user(request):
         session = SessionStore(session_key=request.POST['_token'])
     elif '_token' in request.GET:
         session = SessionStore(session_key=request.GET['_token'])
-    if session is None:
+    if session is None or '_auth_user_id' not in session or '_auth_user_backend' not in session:
         return AnonymousUser()
 
     user_id = session['_auth_user_id']

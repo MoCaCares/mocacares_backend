@@ -12,9 +12,16 @@ REDIS_PORT = 6379
 
 
 def get_noreads(request):
+    if '_token' not in request.POST:
+        return response_of_failure(msg='missing field(s)')
+
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to login first')
+
     return JsonResponse(api_returned_object(info={
-        'new_msg': '0',  # TODO: calculate and return
-        'new_comment': '0'
+        'new_msg': Message.objects.filter(read=False, receiver=user).count(),
+        'new_comment': '0',  # TODO: calculate and return
     }))
 
 

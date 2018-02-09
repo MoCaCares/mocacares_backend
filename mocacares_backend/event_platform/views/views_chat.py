@@ -1,12 +1,13 @@
-from .views_event import *
-from .views_user import *
+import redis
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from django.http import HttpResponse, JsonResponse
+
 from ..models import *
 from ..util import *
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, JsonResponse
-from django.db import IntegrityError
+from .views_event import *
+from .views_user import *
 
-import redis
 REDIS_DOMAIN = '0.0.0.0'
 REDIS_PORT = 6379
 
@@ -118,18 +119,8 @@ def get_chat_friend(request):
             chat_friends.append({
                 'uid': other.pk,
                 'name': other.username,
-                "img": "http://apoimg-10058029.image.myqcloud.com/test_fileId_387da613-7632-4c6b-864d-052fa1358683",  # TODO: return the actual image url
+                "img": get_image_url(other.portrait),
                 'statement': 'statement',
                 'no_read': messages.filter(read=False, receiver=user).count(),
             })
     return JsonResponse(api_returned_object(info=chat_friends))
-
-
-
-
-
-
-
-
-
-

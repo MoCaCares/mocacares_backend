@@ -11,9 +11,7 @@ urlpatterns = [
 
     url(r'^api/event/eventDel$', views.delete_event),
 
-    url(r'^api/event/eventAdd$', views.add_event),
-
-    url(r'^api/event/eventEdit$', views.edit_event),
+    url(r'^api/event/eventAdd$', views.add_or_edit_event),
 
     url(r'^api/event/eventList$', views.get_events),
 

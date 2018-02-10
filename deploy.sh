@@ -13,7 +13,5 @@ pm2 stop all
 pm2 delete all
 pm2 start socket/socket.js -i max
 
-# add all pre-defined event types.
-python prepare_data.py
 
 

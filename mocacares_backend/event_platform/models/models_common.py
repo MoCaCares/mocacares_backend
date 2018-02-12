@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 class UploadedImage(models.Model):
     image = models.ImageField()
-    image_url = models.TextField()
+    image_url = models.TextField(blank=True, default='')
 
     def save(self, *args, **kwargs):
         super(UploadedImage, self).save(*args, **kwargs) # Call the "real" save() method.

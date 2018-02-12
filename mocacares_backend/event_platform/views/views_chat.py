@@ -47,7 +47,7 @@ def follow_or_unfollow_user(request):
 
 
 def get_following_users(request):
-    if '_token' not in request.POST or 'type' not in request.POST:
+    if 'type' not in request.POST:
         return response_of_failure(msg='missing field(s)')
     
     user = get_user(request)
@@ -66,10 +66,11 @@ def get_following_users(request):
 
 
 def send_message(request):
-    if '_token' not in request.POST or 'sid' not in request.POST or 'msg' not in request.POST:
+    if 'sid' not in request.POST or 'msg' not in request.POST:
         return response_of_failure(msg='missing field(s)')
     if request.POST['msg'] == '':
         return response_of_success(msg='empty message is not sent')
+    
     sender = get_user(request)
     if isinstance(sender, AnonymousUser):
         return response_of_failure(msg='you need to login first')
@@ -88,7 +89,7 @@ def send_message(request):
 
 # get message history between the user and another
 def get_chat_list(request):
-    if '_token' not in request.POST or 'sid' not in request.POST:
+    if 'sid' not in request.POST:
         return response_of_failure(msg='missing field(s)') 
 
     user = get_user(request)

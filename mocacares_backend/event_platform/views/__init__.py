@@ -16,11 +16,8 @@ IMAGE_TYPE = ['jpeg', 'png']
 
 
 def post_comment(request):
-    if '_token' not in request.POST or 'aid' not in request.POST or 'content' not in request.POST:
-        return JsonResponse({
-            'code': 0,
-            'msg': 'invalid request'
-        }, status=400)
+    if 'aid' not in request.POST or 'content' not in request.POST:
+        return response_of_failure(msg='missing field(s)')
 
     user = get_user(request)
     if isinstance(user, AnonymousUser):
@@ -44,7 +41,7 @@ def post_feedback(request):
 
 
 def book_event(request):
-    if 'aid' not in request.POST or '_token' not in request.POST or 'type' not in request.POST:
+    if 'aid' not in request.POST or 'type' not in request.POST:
         return response_of_failure(msg='missing fields(s)')
     user = get_user(request)
     event = Event.objects.get(pk=request.POST['aid'])
@@ -61,7 +58,7 @@ def book_event(request):
 
 
 def get_booked_events(request):
-    if '_token' not in request.POST or 'type' not in request.POST:
+    if 'type' not in request.POST:
         return response_of_failure("missing field(s)")
     user = get_user(request)
     if request.POST['type'] == '1':
@@ -79,7 +76,7 @@ def get_booked_events(request):
 
 
 def get_published_events(request):
-    if '_token' not in request.POST or 'page' not in request.POST:
+    if 'page' not in request.POST:
         return JsonResponse({
             'code': 0,
             'msg': 'invalid request'

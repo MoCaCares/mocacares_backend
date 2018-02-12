@@ -8,6 +8,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from ..util import get_user
+import imghdr
+
+
+IMAGE_TYPE = ['jpeg', 'png']
 
 
 def post_comment(request):
@@ -106,6 +110,11 @@ def get_published_events(request):
 def upload_image(request):
     if 'filename' not in request.FILES:
         return response_of_failure(msg='missing field(s)')
+    
+    file_type = imghdr.what(request.FILES['filename'])
+    if file_type not in IMAGE_TYPE:
+        return response_of_failure(msg='uploaded file is of invalid type')
+    
     uploaded_image = UploadedImage(image=request.FILES['filename'])
     uploaded_image.save()
     return JsonResponse(api_returned_object(info=uploaded_image.image_url))

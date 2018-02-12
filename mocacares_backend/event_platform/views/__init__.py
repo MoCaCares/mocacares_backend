@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from ..util import get_user
 import imghdr
+from django.core.exceptions import ValidationError
 
 
 IMAGE_TYPE = ['jpeg', 'png']
@@ -116,7 +117,10 @@ def upload_image(request):
         return response_of_failure(msg='uploaded file is of invalid type')
     
     uploaded_image = UploadedImage(image=request.FILES['filename'])
-    uploaded_image.save()
+    try:
+        uploaded_image.save()
+    except ValidationError as err:
+        return response_of_failure(msg=err.message)
     return JsonResponse(api_returned_object(info=uploaded_image.image_url))
 
 

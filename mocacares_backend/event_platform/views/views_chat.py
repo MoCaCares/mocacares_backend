@@ -13,9 +13,6 @@ REDIS_PORT = 6379
 
 
 def get_noreads(request):
-    if '_token' not in request.POST:
-        return response_of_failure(msg='missing field(s)')
-
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='you need to login first')
@@ -27,7 +24,7 @@ def get_noreads(request):
 
 
 def follow_or_unfollow_user(request):
-    if 'fid' not in request.POST or '_token' not in request.POST:
+    if 'fid' not in request.POST:
         return response_of_failure(msg='missing field(s)')
 
     user = get_user(request)
@@ -106,9 +103,6 @@ def get_chat_list(request):
 
 
 def get_chat_friend(request):
-    if '_token' not in request.POST:
-        return response_of_failure(msg='missing field(s)')
-    
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='you need to login first')

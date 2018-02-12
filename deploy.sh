@@ -1,4 +1,6 @@
-# assume in python virtual environment
+# activate python virtual environment
+source env/bin/activate
+
 pip install -r dev_reqs.txt
 
 python mocacares_backend/manage.py makemigrations

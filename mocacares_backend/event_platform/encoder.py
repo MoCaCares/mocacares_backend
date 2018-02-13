@@ -1,7 +1,8 @@
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import AnonymousUser
+from django.core.serializers.json import DjangoJSONEncoder
+
 from .models import *
-from django.utils.encoding import uri_to_iri
+from .util import get_image_url
 
 
 def format_datetime(datetime):
@@ -12,13 +13,6 @@ def datetime_to_date_str(datetime):
 
 def datetime_to_time_str(datetime):
     return datetime.strftime('%H:%M:%S')
-
-def get_image_url(uploaded_image):
-    default = ''
-    if not uploaded_image or not uploaded_image.image_url:
-        return default
-
-    return uri_to_iri(uploaded_image.image_url[1:])
 
 def parse_bool_to_int(b):
     return '1' if b else '0'
@@ -122,7 +116,7 @@ class FriendEncoder(DjangoJSONEncoder):
                 "uid": obj.pk,
                 "fid": obj.pk,
                 "u_username": obj.username,
-                "img": get_image_url(obj.portrait),
+                "u_img": get_image_url(obj.portrait),
             }
         return super(FriendEncoder, self).default(obj)
 
@@ -143,12 +137,3 @@ class MessageEncoder(DjangoJSONEncoder):
                 "s_img": get_image_url(obj.receiver.portrait),
             }
         return super(MessageEncoder, self).default(obj)
-
-
-
-
-
-
-
-
-

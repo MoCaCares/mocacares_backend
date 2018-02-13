@@ -1,11 +1,13 @@
-from .models import *
-from django.contrib.auth.models import AnonymousUser
 from importlib import import_module
-from django.conf import settings
-from django.utils.module_loading import import_string
-from django.http import HttpResponse, JsonResponse
 from random import randint
 
+from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
+from django.http import HttpResponse, JsonResponse
+from django.utils.encoding import uri_to_iri
+from django.utils.module_loading import import_string
+
+from .models import *
 
 SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
 
@@ -57,3 +59,10 @@ def api_returned_object(code='1', msg='', info=''):
         'info': info
     }
 
+
+def get_image_url(uploaded_image):
+    default = ''
+    if not uploaded_image or not uploaded_image.image_url:
+        return default
+
+    return uri_to_iri(uploaded_image.image_url[1:])

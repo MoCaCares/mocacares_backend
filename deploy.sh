@@ -1,4 +1,6 @@
-# assume in python virtual environment
+# activate python virtual environment
+source env/bin/activate
+
 pip install -r dev_reqs.txt
 
 python mocacares_backend/manage.py makemigrations
@@ -13,7 +15,5 @@ pm2 stop all
 pm2 delete all
 pm2 start socket/socket.js -i max
 
-# add all pre-defined event types.
-python prepare_data.py
 
 

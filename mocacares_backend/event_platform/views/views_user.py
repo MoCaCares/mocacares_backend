@@ -89,8 +89,6 @@ def user_register(request):
 
 
 def get_user_info(request):
-    if '_token' not in request.POST:
-        return response_of_failure('missing field(s)')
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='you need to login first')
@@ -103,8 +101,6 @@ def set_user_info(request):
             return None
         return True if i == '1' else False
     
-    if '_token' not in request.POST:
-        return response_of_failure('missing field(s)')
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='you need to login first')
@@ -143,7 +139,7 @@ def set_user_info(request):
 
 
 def get_user_space(request):
-    if 'uid' not in request.POST or '_token' not in request.POST:
+    if 'uid' not in request.POST:
         return response_of_failure('missing field(s)')
     user = get_user(request)
     if isinstance(user, AnonymousUser):
@@ -172,9 +168,6 @@ def get_user_space(request):
 
 
 def change_pwd(request):
-    if '_token' not in request.POST:
-        return response_of_failure(msg='Invalid token')
-
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in to change password.')
@@ -197,16 +190,10 @@ def change_pwd(request):
     user.set_password(new_pwd)
     user.save()
 
-    return JsonResponse({
-        'code': 1,
-        'msg': 'Password changed successfully.'
-    }, status=200)
+    return response_of_success(msg='Password changed successfully.')
 
 
 def send_verify(request):
-    if '_token' not in request.POST:
-        return response_of_failure(msg='Invalid token')
-
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in to change password.')
@@ -226,10 +213,7 @@ def send_verify(request):
 
     #TODO: Image OneToOne
 
-    return JsonResponse({
-        'code': 1,
-        'msg': 'Verification code sent successfully.'
-    }, status=200)
+    return response_of_success(msg='Verification code sent successfully.')
 
 
 # Temp

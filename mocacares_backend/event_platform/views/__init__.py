@@ -8,29 +8,25 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from ..util import get_user
+import imghdr
+from django.core.exceptions import ValidationError
+
+
+IMAGE_TYPE = ['jpeg', 'png']
 
 
 def post_comment(request):
-    if '_token' not in request.POST or 'aid' not in request.POST or 'content' not in request.POST:
-        return JsonResponse({
-            'code': 0,
-            'msg': 'invalid request'
-        }, status=400)
+    if 'aid' not in request.POST or 'content' not in request.POST:
+        return response_of_failure(msg='missing field(s)')
 
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return JsonResponse({
-            'code': 0,
-            'msg': 'You need to log in to post comment'
-        }, status=400)
+        return response_of_failure(msg='you need to log in to post comment')
 
     event = Event.objects.get(pk=request.POST['aid'])
     comment = Comment(poster=user, target_event=event, content=request.POST['content'])
     comment.save()
-    return JsonResponse({
-        'code': 1,
-        'msg': 'success'
-    })
+    return response_of_success(msg='success')
 
 
 def post_feedback(request):
@@ -41,19 +37,16 @@ def post_feedback(request):
         receiver_list=['royl8@qq.com']
     ).start()
 
-    return JsonResponse({
-        'code': 1,
-        'msg': 'feedback sent successfully'
-    }, status=200)
+    return response_of_success(msg='feedback sent successfully')
 
 
 def book_event(request):
-    if 'aid' not in request.POST or '_token' not in request.POST or 'type' not in request.POST:
-        return JsonResponse({
-            'code': 0,
-            'msg': 'invalid request'
-        }, status=400)
+    if 'aid' not in request.POST or 'type' not in request.POST:
+        return response_of_failure(msg='missing fields(s)')
     user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to log in first')
+
     event = Event.objects.get(pk=request.POST['aid'])
     if request.POST['type'] == '1':
         event.participants.add(user)
@@ -64,16 +57,16 @@ def book_event(request):
             'code': 0,
             'msg': 'invalid request'
         }, status=400)
-    return JsonResponse({
-        'code': 1,
-        'msg': 'success'
-    })
+    return response_of_success(msg='success') 
 
 
 def get_booked_events(request):
-    if '_token' not in request.POST or 'type' not in request.POST:
-        return response_of_failure("missing field(s)")
+    if 'type' not in request.POST:
+        return response_of_failure(msg="missing field(s)")
     user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to log in first')
+
     if request.POST['type'] == '1':
         events = user.participated_event_set.all()
     elif request.POST['type'] == '2':
@@ -87,9 +80,8 @@ def get_booked_events(request):
     }, encoder=EventSummaryEncoder)
 
 
-
 def get_published_events(request):
-    if '_token' not in request.POST or 'page' not in request.POST:
+    if 'page' not in request.POST:
         return JsonResponse({
             'code': 0,
             'msg': 'invalid request'
@@ -106,8 +98,16 @@ def get_published_events(request):
 def upload_image(request):
     if 'filename' not in request.FILES:
         return response_of_failure(msg='missing field(s)')
+    
+    file_type = imghdr.what(request.FILES['filename'])
+    if file_type not in IMAGE_TYPE:
+        return response_of_failure(msg='uploaded file is of invalid type')
+    
     uploaded_image = UploadedImage(image=request.FILES['filename'])
-    uploaded_image.save()
+    try:
+        uploaded_image.save()
+    except ValidationError as err:
+        return response_of_failure(msg=err.message)
     return JsonResponse(api_returned_object(info=uploaded_image.image_url))
 
 

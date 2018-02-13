@@ -70,7 +70,7 @@ def send_message(request):
     
     sender = get_user(request)
     if isinstance(sender, AnonymousUser):
-        return response_of_failure(msg='you need to login first')
+        return response_of_failure(msg='you need to login to send message')
     
     receiver = User.objects.get(pk=request.POST['sid'])
     message = Message(sender=sender, receiver=receiver, content=request.POST['msg'], read=False)

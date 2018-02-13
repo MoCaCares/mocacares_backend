@@ -116,7 +116,7 @@ class FriendEncoder(DjangoJSONEncoder):
                 "uid": obj.pk,
                 "fid": obj.pk,
                 "u_username": obj.username,
-                "img": get_image_url(obj.portrait),
+                "u_img": get_image_url(obj.portrait),
             }
         return super(FriendEncoder, self).default(obj)
 

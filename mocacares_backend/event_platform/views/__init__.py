@@ -44,6 +44,9 @@ def book_event(request):
     if 'aid' not in request.POST or 'type' not in request.POST:
         return response_of_failure(msg='missing fields(s)')
     user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to log in first')
+
     event = Event.objects.get(pk=request.POST['aid'])
     if request.POST['type'] == '1':
         event.participants.add(user)
@@ -59,8 +62,11 @@ def book_event(request):
 
 def get_booked_events(request):
     if 'type' not in request.POST:
-        return response_of_failure("missing field(s)")
+        return response_of_failure(msg="missing field(s)")
     user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='you need to log in first')
+
     if request.POST['type'] == '1':
         events = user.participated_event_set.all()
     elif request.POST['type'] == '2':
@@ -72,7 +78,6 @@ def get_booked_events(request):
         'msg': 'success',
         'info': list(events)
     }, encoder=EventSummaryEncoder)
-
 
 
 def get_published_events(request):

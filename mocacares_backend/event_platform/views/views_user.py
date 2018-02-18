@@ -113,6 +113,8 @@ def set_user_info(request):
     if 'statement' in request.POST:
         user.username = request.POST['statement']
     if 'img' in request.POST:
+        if user.portrait is not None:
+            user.portrait.delete()
         user.portrait = UploadedImage.objects.get(image_url=request.POST['img'])
     if 'age' in request.POST:
         try:

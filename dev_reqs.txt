@@ -4,6 +4,7 @@ python-memcached
 django-redis-cache
 pillow
 redis
+validate_email
 
 ###### development ######
 pylint  # coding style

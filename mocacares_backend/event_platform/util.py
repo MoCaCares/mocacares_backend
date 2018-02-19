@@ -65,4 +65,4 @@ def get_image_url(uploaded_image):
     if not uploaded_image or not uploaded_image.image_url:
         return default
 
-    return uri_to_iri(uploaded_image.image_url[1:])
+    return uploaded_image.image_url

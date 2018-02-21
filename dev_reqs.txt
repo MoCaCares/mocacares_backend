@@ -4,6 +4,9 @@ python-memcached
 django-redis-cache
 pillow
 redis
+validate_email
+boto3  # store media files in digitalocean spaces
+django-storages  # store media files in digitalocean spaces
 
 ###### development ######
 pylint  # coding style

@@ -1,6 +1,7 @@
 import threading
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
+from validate_email import validate_email
 
 
 class EmailThread(threading.Thread):  # TODO: move to util.py
@@ -37,7 +38,7 @@ def validate_user_type(user_type):
 
 
 def validate_email_format(email):
-    return True
+    return validate_email(email)
 
 
 def validate_password_format(password):

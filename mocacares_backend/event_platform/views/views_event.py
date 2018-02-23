@@ -149,13 +149,14 @@ def add_or_edit_event(request):
         model_key = key_mapping.get(key, None) or key
         setattr(event, model_key, value)
 
-    image_url = request.POST['img']
-    try:
-        img = UploadedImage.objects.get(image_url=image_url)
-        event.img = img
-    except ObjectDoesNotExist:
-        return response_of_failure(msg='Image does not exist')
-        pass
+    if 'img' in request.POST:
+        try:
+            image_url = request.POST['img']
+            img = UploadedImage.objects.get(image_url=image_url)
+            event.img = img
+        except ObjectDoesNotExist:
+            return response_of_failure(msg='Image does not exist')
+            pass
 
     event.start_time = start_time
     event.end_time = end_time

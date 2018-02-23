@@ -77,12 +77,38 @@ def get_events(request):
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
 
+def _unify_date_format(date_str):
+    format_1_to_be_changed = '%Y-%m-%d'
+    format_2_to_be_changed = '(null),%d %b'
+    correct_format = '%A,%d %b'
+    try:
+        return datetime.strptime(date_str, format_1_to_be_changed).strftime(correct_format)
+    except ValueError:
+        try:
+            return datetime.strptime(date_str, format_2_to_be_changed).strftime(correct_format)
+        except ValueError:
+            return date_str
+
+def _unify_time_format(time_str):
+    format_to_be_changed = '%H:%M:%S'
+    correct_format = '%I:%M %p'
+    try:
+        return datetime.strptime(time_str, format_to_be_changed).strftime(correct_format)
+    except ValueError:
+        return time_str
+
+def _change_time_str_format(time_str):
+    hour_min = time_str.split(':')
+    if hour_min[0] == '0':
+        hour_min[0] = '12'
+    return ':'.join(hour_min)
+
 def add_or_edit_event(request):
-    if '_token' not in request.POST:
-        return response_of_failure(msg='Invalid token')
+    print(request.POST)
+    print()
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return response_of_failure(msg='You need to log in to post an event.')
+        return response_of_failure(msg='You need to log in to post or edit an event.')
 
     if user.user_type != 2:
         return response_of_failure(msg='No permission')
@@ -97,37 +123,10 @@ def add_or_edit_event(request):
 
     all_keys = ['type', 'title', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
 
-    def unify_date_format(date_str):
-        format_1_to_be_changed = '%Y-%m-%d'
-        format_2_to_be_changed = '(null),%d %b'
-        correct_format = '%A,%d %b'
-        try:
-            return datetime.strptime(date_str, format_1_to_be_changed).strftime(correct_format)
-        except ValueError:
-            try:
-                return datetime.strptime(date_str, format_2_to_be_changed).strftime(correct_format)
-            except ValueError:
-                return date_str
+    begin_time = _unify_date_format(request.POST['begin_time'])
 
-    begin_time = unify_date_format(request.POST['begin_time'])
-
-    def unify_time_format(time_str):
-        format_to_be_changed = '%H:%M:%S'
-        correct_format = '%I:%M %p'
-        try:
-            return datetime.strptime(time_str, format_to_be_changed).strftime(correct_format)
-        except ValueError:
-            return time_str
-
-
-    def change_time_str_format(time_str):
-        hour_min = time_str.split(':')
-        if hour_min[0] == '0':
-            hour_min[0] = '12'
-        return ':'.join(hour_min)
-
-    hour_start = change_time_str_format(unify_time_format(request.POST['hour_start']))
-    hour_end = change_time_str_format(unify_time_format(request.POST['hour_end']))
+    hour_start = _change_time_str_format(_unify_time_format(request.POST['hour_start']))
+    hour_end = _change_time_str_format(_unify_time_format(request.POST['hour_end']))
 
     datetime_format = '%Y %A,%d %b %I:%M %p'
     year_str = str(datetime.now().year)
@@ -155,7 +154,7 @@ def add_or_edit_event(request):
         img = UploadedImage.objects.get(image_url=image_url)
         event.img = img
     except ObjectDoesNotExist:
-        # return response_of_failure(msg='Image does not exist')
+        return response_of_failure(msg='Image does not exist')
         pass
 
     event.start_time = start_time

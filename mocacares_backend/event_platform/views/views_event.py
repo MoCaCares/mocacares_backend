@@ -96,7 +96,29 @@ def add_or_edit_event(request):
         return response_of_failure('Invalid event')
 
     all_keys = ['type', 'title', 'content', 'desrc', 'add', 'question', 'time_type', 'week']
-    begin_time = request.POST['begin_time']
+
+    def unify_date_format(date_str):
+        format_1_to_be_changed = '%Y-%m-%d'
+        format_2_to_be_changed = '(null),%d %b'
+        correct_format = '%A,%d %b'
+        try:
+            return datetime.strptime(date_str, format_1_to_be_changed).strftime(correct_format)
+        except ValueError:
+            try:
+                return datetime.strptime(date_str, format_2_to_be_changed).strftime(correct_format)
+            except ValueError:
+                return date_str
+
+    begin_time = unify_date_format(request.POST['begin_time'])
+
+    def unify_time_format(time_str):
+        format_to_be_changed = '%H:%M:%S'
+        correct_format = '%I:%M %p'
+        try:
+            return datetime.strptime(time_str, format_to_be_changed).strftime(correct_format)
+        except ValueError:
+            return time_str
+
 
     def change_time_str_format(time_str):
         hour_min = time_str.split(':')
@@ -104,8 +126,8 @@ def add_or_edit_event(request):
             hour_min[0] = '12'
         return ':'.join(hour_min)
 
-    hour_start = change_time_str_format(request.POST['hour_start'])
-    hour_end = change_time_str_format(request.POST['hour_end'])
+    hour_start = change_time_str_format(unify_time_format(request.POST['hour_start']))
+    hour_end = change_time_str_format(unify_time_format(request.POST['hour_end']))
 
     datetime_format = '%Y %A,%d %b %I:%M %p'
     year_str = str(datetime.now().year)
@@ -131,10 +153,11 @@ def add_or_edit_event(request):
     image_url = request.POST['img']
     try:
         img = UploadedImage.objects.get(image_url=image_url)
+        event.img = img
     except ObjectDoesNotExist:
-        return response_of_failure(msg='Image does not exist')
+        # return response_of_failure(msg='Image does not exist')
+        pass
 
-    event.img = img
     event.start_time = start_time
     event.end_time = end_time
     event.poster_id = user.id

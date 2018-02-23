@@ -15,7 +15,7 @@ class EventType(models.Model):
 class Event(models.Model):
     title = models.CharField(max_length=1028)
     description = models.TextField()
-    address = models.TextField()
+    address = models.TextField(null=True, blank=True)
     img = models.OneToOneField(UploadedImage, on_delete=models.SET_NULL, null=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
@@ -26,6 +26,7 @@ class Event(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description
+
 
 @receiver(models.signals.pre_delete, sender=Event)
 def delete_attaching_image(sender, instance, **kwargs):

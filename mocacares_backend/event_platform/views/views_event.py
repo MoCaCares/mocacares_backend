@@ -113,10 +113,6 @@ def add_or_edit_event(request):
     if user.user_type != 2:
         return response_of_failure(msg='No permission')
 
-    aid = None
-    if 'aid' in request.POST:
-        aid = request.POST['aid']
-
     required_keys = ['title', 'type', 'time_type', 'desrc', 'hour_start', 'hour_end', 'begin_time']
     if not all([field in request.POST for field in required_keys]):
         return response_of_failure('Invalid event')
@@ -136,7 +132,7 @@ def add_or_edit_event(request):
     key_mapping = {'type': 'event_type_id', 'desrc': 'description', 'add': 'address'}
 
     event = None
-    if aid:
+    if 'aid' in request.POST:
         try:
             event = Event.objects.get(pk=request.POST['aid'])
         except ObjectDoesNotExist:

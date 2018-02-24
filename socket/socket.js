@@ -62,7 +62,7 @@ function connectionHandler(sock) {
         inspect();
     });
 
-    sock.setTimeout(1000 * 60 * 10);  // in millisecond
+    sock.setTimeout(1000 * 60 * 60);  // in millisecond
     sock.on('timeout', function() {
         console.log('TIMEOUT and CLOSE: ' + clientIpport);
         shutdownSocket(sock, clientIpport);

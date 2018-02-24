@@ -1,3 +1,5 @@
+import json
+
 from ..models import *
 from ..encoder import *
 from ..util import *
@@ -32,24 +34,28 @@ def update_system_config(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in to update your preferences.')
 
-    recommend = request.POST.get('recommend', None)
-    if recommend not in ['1', '2', '3', '4']:
-        return response_of_failure(msg='Invalid setting value')
-    notify = request.POST.get('notify', None)
-    if notify not in ['1', '2']:
-        return response_of_failure(msg='Invalid setting value')
-    receive = request.POST.get('receive', None)
-    if receive not in ['1']:
+
+    try:
+        recommend = json.loads(request.POST.get('recommend', None))
+        if set(recommend) - {'1', '2', '3', '4'}:
+            return response_of_failure(msg='Invalid setting value')
+        notify = json.loads(request.POST.get('notify', None))
+        if set(notify) - {'1', '2'}:
+            return response_of_failure(msg='Invalid setting value')
+        receive = json.loads(request.POST.get('receive', None))
+        if set(receive) - {'1'}:
+            return response_of_failure(msg='Invalid setting value')
+    except json.decoder.JSONDecodeError:
         return response_of_failure(msg='Invalid setting value')
 
     system_config = user.system_config
 
     if recommend:
-        system_config.recommend = recommend
+        system_config.recommend = json.dumps(recommend)
     if notify:
-        system_config.notify = notify
+        system_config.notify = json.dumps(notify)
     if receive:
-        system_config.receive = receive
+        system_config.receive = json.dumps(receive)
     system_config.save()
     return JsonResponse({
         'code': 1,

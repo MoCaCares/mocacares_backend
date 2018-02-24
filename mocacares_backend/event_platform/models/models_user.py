@@ -12,9 +12,9 @@ from .models_common import UploadedImage
 
 
 class SystemConfig(models.Model):
-    recommend = models.IntegerField(default=1) # 1, 2, 3, 4
-    notify = models.IntegerField(default=1) # 1, 2
-    receive = models.IntegerField(default=1) # 1
+    recommend = models.TextField(default='[]') # 1, 2, 3, 4
+    notify = models.TextField(default='[]') # 1, 2
+    receive = models.TextField(default='[]') # 1
     is_show_email = models.BooleanField(default=True)
     is_show_events = models.BooleanField(default=False)
 
@@ -82,7 +82,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     statement = models.TextField(default='')
 
     occupation = models.TextField(default='')
-    
+
     age = models.IntegerField(default=0)
 
     gender = models.IntegerField(default=1)

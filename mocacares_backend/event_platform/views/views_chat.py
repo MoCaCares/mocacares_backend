@@ -35,12 +35,18 @@ def follow_or_unfollow_user(request):
         target_user = User.objects.get(pk=request.POST['fid'])
         if target_user in user.following_users.all():
             user.following_users.remove(target_user)
+            status = '0'
         else:
             user.following_users.add(target_user)
+            status = '1'
     except ObjectDoesNotExist:
         return response_of_failure(msg='target user not found')
 
-    return response_of_success(msg='success')
+    return JsonResponse({
+        'code': 1,
+        'msg': 'Success',
+        'info': status
+    })
 
 
 def get_following_users(request):

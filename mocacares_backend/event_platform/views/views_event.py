@@ -183,14 +183,17 @@ def delete_event(request):
 
 
 def get_event(request):
+    user = get_user(request)
+    if isinstance(user, AnonymousUser):
+        return response_of_failure(msg='You need to log in first.')
+    
     event_id = request.POST['aid']
     try:
         event = Event.objects.get(pk=event_id)
-        return JsonResponse({
-            'code': 1,
-            'msg': '',
-            'info': event
-        }, encoder=EventDetailEncoder)
+        json_response = EventDetailEncoder().default(event)
+        json_response['isbook'] = '1'  if user in event.followers.all() else '0'
+        json_response['ispart'] = '1'  if user in event.participants.all() else '0'
+        return JsonResponse(api_returned_object(info=json_response))
     except ObjectDoesNotExist:
         return response_of_failure(msg='event cannot be found')
 

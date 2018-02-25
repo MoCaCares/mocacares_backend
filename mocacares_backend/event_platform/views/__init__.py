@@ -49,15 +49,29 @@ def book_event(request):
 
     event = Event.objects.get(pk=request.POST['aid'])
     if request.POST['type'] == '1':
-        event.participants.add(user)
+        if user in event.participants.all():
+            event.participants.remove(user)
+            status = '0'
+        else:
+            event.participants.add(user)
+            status = '1'
     elif request.POST['type'] == '2':
-        event.followers.add(user)
+        if user in event.followers.all():
+            event.followers.remove(user)
+            status = '0'
+        else:
+            event.followers.add(user)
+            status = '1'
     else:
         return JsonResponse({
             'code': 0,
             'msg': 'invalid request'
         }, status=400)
-    return response_of_success(msg='success') 
+    return JsonResponse({
+        'code': 1,
+        'msg': 'Success',
+        'info': status
+    }) 
 
 
 def get_booked_events(request):

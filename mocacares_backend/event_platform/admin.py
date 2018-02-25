@@ -15,6 +15,7 @@ class UserModelAdmin(admin.ModelAdmin):
 
 class EventModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'description']
+    filter_horizontal = ['followers', 'participants']
 
 class FeedbackModelAdmin(admin.ModelAdmin):
     list_display = ['id']

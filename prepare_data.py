@@ -8,6 +8,26 @@ django.setup()
 from event_platform.models import *
 
 
+for event in Event.objects.all():
+    event.delete()
+
+EventType(
+    name='elderly cares',
+).save()
+
+EventType(
+    name='five loaves',
+).save()
+
+EventType(
+    name='paid jobs',
+).save()
+
+EventType(
+    name='tuition aid',
+).save()
+
+
 
 for i in range(1,11):
     config = SystemConfig()
@@ -31,13 +51,6 @@ for i in range(1,11):
     )
     vol_user.set_password('a123456')
     vol_user.save()
-
-for i in range(1,11):
-    event_type = EventType(
-        name='type'+str(i),
-    )
-    event_type.save()
-
 
 
 print(list(User.objects.all()))

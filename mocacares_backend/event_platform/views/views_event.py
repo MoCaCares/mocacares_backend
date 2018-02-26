@@ -81,7 +81,7 @@ def get_events(request):
         keyword_matching_events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
         keyword_matching_users = User.objects.filter(Q(username__icontains=search_key) | Q(statement__icontains=search_key))
         events_posted_by_matching_users = events.filter(poster__in=keyword_matching_users)
-        events = keyword_matching_events | events_posted_by_matching_users
+        events = keyword_matching_events.union(events_posted_by_matching_users)
 
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
@@ -221,7 +221,12 @@ def get_recommended_events(request):
     page_end = page + 6
     event_type = request.POST.getlist('type[]')
 
-    events = Event.objects.filter(event_type_id__in=event_type)[page:page_end]
+    events = Event.objects.filter(event_type_id__in=event_type)
+    # 1. Recommend events bookmarked by users I follow
+    # 2. Recommend events participated by users I follow
+    # 3. Recommend events of the same categories as my past events
+    # 3. Recommend events of the same organizer as my past events
+    events = events[page:page_end]
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
 

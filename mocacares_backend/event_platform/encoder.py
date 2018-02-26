@@ -54,6 +54,7 @@ class EventSummaryEncoder(DjangoJSONEncoder):
             return {
                 "id": obj.pk,
                 "aid": obj.pk,
+                "uid": obj.poster.pk,
                 'week': '1',
                 'begin_time': datetime_to_date_str(obj.start_time),
                 'hour_start': datetime_to_time_str(obj.start_time),
@@ -76,6 +77,8 @@ class EventDetailEncoder(DjangoJSONEncoder):
             return {
                 "id": obj.pk,
                 "aid": obj.pk,
+                "uid": obj.poster.pk,
+                "u_img": get_image_url(obj.poster.portrait),
                 'week': '1',
                 'begin_time': datetime_to_date_str(obj.start_time),
                 'hour_start': datetime_to_time_str(obj.start_time),
@@ -87,8 +90,6 @@ class EventDetailEncoder(DjangoJSONEncoder):
                 "add": obj.address,
                 "type": obj.event_type.pk,
                 "t_name": obj.event_type.name,
-                "uid": obj.poster.pk,
-                "u_img": get_image_url(obj.poster.portrait),
             }
         return super(EventDetailEncoder, self).default(obj)
 

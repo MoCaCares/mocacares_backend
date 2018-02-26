@@ -78,7 +78,10 @@ def get_events(request):
     if event_type is not None:
         events = events.filter(event_type=event_type)
     if search_key is not None:
-        events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
+        keyword_matching_events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
+        keyword_matching_users = User.objects.filter(Q(username__icontains=search_key) | Q(statement__icontains=search_key))
+        events_posted_by_matching_users = events.filter(poster__in=keyword_matching_users)
+        events = keyword_matching_events | events_posted_by_matching_users
 
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
@@ -192,7 +195,7 @@ def get_event(request):
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in first.')
-    
+
     event_id = request.POST['aid']
     try:
         event = Event.objects.get(pk=event_id)

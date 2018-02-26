@@ -9,13 +9,13 @@ def format_datetime(datetime):
     return datetime.strftime("%Y-%m-%d %H:%M:%S")
 
 def datetime_to_date_str(datetime):
-    return datetime.strftime('%Y-%m-%d')
+    return datetime.strftime("%Y-%m-%d")
 
 def datetime_to_time_str(datetime):
-    return datetime.strftime('%H:%M:%S')
+    return datetime.strftime("%H:%M:%S")
 
 def parse_bool_to_int(b):
-    return '1' if b else '0'
+    return "1" if b else "0"
 
 
 class UserInfoEncoder(DjangoJSONEncoder):
@@ -41,9 +41,9 @@ class EventTypeEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, EventType):
             return {
-                'id': obj.pk,
-                'name': obj.name,
-                'img': get_image_url(obj.img)
+                "id": obj.pk,
+                "name": obj.name,
+                "img": get_image_url(obj.img)
             }
         return super(EventTypeEncoder, self).default(obj)
 
@@ -54,11 +54,12 @@ class EventSummaryEncoder(DjangoJSONEncoder):
             return {
                 "id": obj.pk,
                 "aid": obj.pk,
-                'week': '1',
-                'begin_time': datetime_to_date_str(obj.start_time),
-                'hour_start': datetime_to_time_str(obj.start_time),
-                'hour_end': datetime_to_time_str(obj.end_time),
-                'time_type': '1',
+                "uid": obj.poster.pk,
+                "week": "1",
+                "begin_time": datetime_to_date_str(obj.start_time),
+                "hour_start": datetime_to_time_str(obj.start_time),
+                "hour_end": datetime_to_time_str(obj.end_time),
+                "time_type": "1",
                 "content": "hellodhjsds",
                 "title": obj.title,
                 "img": get_image_url(obj.img),
@@ -76,19 +77,19 @@ class EventDetailEncoder(DjangoJSONEncoder):
             return {
                 "id": obj.pk,
                 "aid": obj.pk,
-                'week': '1',
-                'begin_time': datetime_to_date_str(obj.start_time),
-                'hour_start': datetime_to_time_str(obj.start_time),
-                'hour_end': datetime_to_time_str(obj.end_time),
-                'time_type': '1',
+                "uid": obj.poster.pk,
+                "u_img": get_image_url(obj.poster.portrait),
+                "week": "1",
+                "begin_time": datetime_to_date_str(obj.start_time),
+                "hour_start": datetime_to_time_str(obj.start_time),
+                "hour_end": datetime_to_time_str(obj.end_time),
+                "time_type": "1",
                 "title": obj.title,
                 "img": get_image_url(obj.img),
                 "desrc": obj.description,
                 "add": obj.address,
                 "type": obj.event_type.pk,
                 "t_name": obj.event_type.name,
-                "uid": obj.poster.pk,
-                "u_img": get_image_url(obj.poster.portrait),
             }
         return super(EventDetailEncoder, self).default(obj)
 

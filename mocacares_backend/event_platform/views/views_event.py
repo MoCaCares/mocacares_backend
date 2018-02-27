@@ -1,3 +1,5 @@
+import json
+
 from ..models import *
 from ..encoder import *
 from ..util import *
@@ -32,24 +34,28 @@ def update_system_config(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in to update your preferences.')
 
-    recommend = request.POST.get('recommend', None)
-    if recommend not in ['1', '2', '3', '4']:
-        return response_of_failure(msg='Invalid setting value')
-    notify = request.POST.get('notify', None)
-    if notify not in ['1', '2']:
-        return response_of_failure(msg='Invalid setting value')
-    receive = request.POST.get('receive', None)
-    if receive not in ['1']:
+
+    try:
+        recommend = json.loads(request.POST.get('recommend', None))
+        if set(recommend) - {'1', '2', '3', '4'}:
+            return response_of_failure(msg='Invalid setting value')
+        notify = json.loads(request.POST.get('notify', None))
+        if set(notify) - {'1', '2'}:
+            return response_of_failure(msg='Invalid setting value')
+        receive = json.loads(request.POST.get('receive', None))
+        if set(receive) - {'1'}:
+            return response_of_failure(msg='Invalid setting value')
+    except json.decoder.JSONDecodeError:
         return response_of_failure(msg='Invalid setting value')
 
     system_config = user.system_config
 
     if recommend:
-        system_config.recommend = recommend
+        system_config.recommend = json.dumps(recommend)
     if notify:
-        system_config.notify = notify
+        system_config.notify = json.dumps(notify)
     if receive:
-        system_config.receive = receive
+        system_config.receive = json.dumps(receive)
     system_config.save()
     return JsonResponse({
         'code': 1,
@@ -72,7 +78,10 @@ def get_events(request):
     if event_type is not None:
         events = events.filter(event_type=event_type)
     if search_key is not None:
-        events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
+        keyword_matching_events = events.filter(Q(title__icontains=search_key) | Q(description__icontains=search_key))
+        keyword_matching_users = User.objects.filter(Q(username__icontains=search_key) | Q(statement__icontains=search_key))
+        events_posted_by_matching_users = events.filter(poster__in=keyword_matching_users)
+        events = keyword_matching_events.union(events_posted_by_matching_users)
 
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
@@ -186,7 +195,7 @@ def get_event(request):
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in first.')
-    
+
     event_id = request.POST['aid']
     try:
         event = Event.objects.get(pk=event_id)
@@ -212,7 +221,12 @@ def get_recommended_events(request):
     page_end = page + 6
     event_type = request.POST.getlist('type[]')
 
-    events = Event.objects.filter(event_type_id__in=event_type)[page:page_end]
+    events = Event.objects.filter(event_type_id__in=event_type)
+    # 1. Recommend events bookmarked by users I follow
+    # 2. Recommend events participated by users I follow
+    # 3. Recommend events of the same categories as my past events
+    # 3. Recommend events of the same organizer as my past events
+    events = events[page:page_end]
     return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
 
 

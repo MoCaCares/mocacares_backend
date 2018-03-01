@@ -158,7 +158,7 @@ def get_user_space(request):
         else:
             target_user_space_json['event'] = []
         
-        if target_user in user.follower_set.all():
+        if user in target_user.follower_set.all():
             target_user_space_json['is_friend'] = '1'
         else:
             target_user_space_json['is_friend'] = '0'

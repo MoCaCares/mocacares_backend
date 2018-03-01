@@ -79,9 +79,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     system_config = models.OneToOneField(SystemConfig, on_delete=models.CASCADE)
 
-    statement = models.TextField(default='')
+    statement = models.TextField(default='', blank=True)
 
-    occupation = models.TextField(default='')
+    occupation = models.TextField(default='', blank=True)
 
     age = models.IntegerField(default=0)
 

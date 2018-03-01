@@ -12,9 +12,9 @@ from .models_common import UploadedImage
 
 
 class SystemConfig(models.Model):
-    recommend = models.TextField(default='[]') # 1, 2, 3, 4
-    notify = models.TextField(default='[]') # 1, 2
-    receive = models.TextField(default='[]') # 1
+    recommend = models.TextField(default='[1, 2, 3, 4]') # 1, 2, 3, 4
+    notify = models.TextField(default='[1, 2, 3]') # 1, 2, 3
+    receive = models.TextField(default='[1]') # 1
     is_show_email = models.BooleanField(default=True)
     is_show_events = models.BooleanField(default=False)
 

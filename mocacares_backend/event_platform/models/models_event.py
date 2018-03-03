@@ -30,7 +30,8 @@ class Event(models.Model):
 
 @receiver(models.signals.pre_delete, sender=Event)
 def delete_attaching_image(sender, instance, **kwargs):
-    instance.img.delete()
+    if instance.img is not None:
+        instance.img.delete()
 
 
 class Feedback(models.Model):

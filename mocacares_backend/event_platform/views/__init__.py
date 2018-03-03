@@ -125,6 +125,12 @@ def upload_image(request):
     return JsonResponse(api_returned_object(info=uploaded_image.image_url))
 
 
+def get_image(request, pk):
+    image = UploadedImage.objects.get(pk=pk).image
+    content = image.storage.open(mode='r', name=image.name).read()
+    return HttpResponse(content, content_type='image')
+
+
 def get_uid_by_sessionkey(request):
     user = get_user(request)
     return HttpResponse(str(user.pk))

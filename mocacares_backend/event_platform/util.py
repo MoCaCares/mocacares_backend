@@ -64,11 +64,4 @@ def get_image_url(uploaded_image):
     default = ''
     if not uploaded_image or not uploaded_image.image_url:
         return default
-
-    # TODO: the following lines are added because the url generated is not permanent.
-    # after the old url get expired, the new url needs to be saved to the database
-    if uploaded_image.image.url != uploaded_image.image_url:
-        uploaded_image.image_url = uploaded_image.image.url
-        super(UploadedImage, uploaded_image).save()
-    
     return uploaded_image.image_url

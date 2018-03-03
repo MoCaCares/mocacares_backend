@@ -15,7 +15,7 @@ class UploadedImage(models.Model):
     def save(self, *args, **kwargs):
         validate_file_size(self.image)
         super(UploadedImage, self).save(*args, **kwargs) # Call the "real" save() method.
-        self.image_url = self.image.url
+        self.image_url = 'api/image/' + str(self.pk)
         super(UploadedImage, self).save(*args, **kwargs) # Call the "real" save() method.
 
 @receiver(models.signals.pre_delete, sender=UploadedImage)

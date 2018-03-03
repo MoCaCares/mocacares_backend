@@ -40,7 +40,7 @@ def update_system_config(request):
         if set(recommend) - {'1', '2', '3', '4'}:
             return response_of_failure(msg='Invalid setting value')
         notify = json.loads(request.POST.get('notify', None))
-        if set(notify) - {'1', '2'}:
+        if set(notify) - {'1', '2', '3'}:
             return response_of_failure(msg='Invalid setting value')
         receive = json.loads(request.POST.get('receive', None))
         if set(receive) - {'1'}:
@@ -218,16 +218,42 @@ def get_recommended_events(request):
         return response_of_failure(msg='You need to log in to view events.')
 
     page = int(request.POST.get('page', 1)) - 1
+    if page < 0:
+        return response_of_failure(msg='Invalid page value.')
     page_end = page + 6
     event_type = request.POST.getlist('type[]')
 
-    events = Event.objects.filter(event_type_id__in=event_type)
-    # 1. Recommend events bookmarked by users I follow
-    # 2. Recommend events participated by users I follow
-    # 3. Recommend events of the same categories as my past events
-    # 3. Recommend events of the same organizer as my past events
-    events = events[page:page_end]
-    return JsonResponse(api_returned_object(info=list(events)), encoder=EventSummaryEncoder)
+    recommend_settings = json.loads(user.system_config.recommend)
+    recommended_events = Event.objects.none()
+
+    following_users = user.following_users.all()
+
+    if 1 in recommend_settings:
+        # Recommend events bookmarked by users I follow
+        bookmarked_events = [u.bookmarked_event_set.all() for u in following_users]
+        recommended_events = recommended_events.union(*bookmarked_events)
+    if 2 in recommend_settings:
+        # Recommend events participated by users I follow
+        participated_events = [u.participated_event_set.all() for u in following_users]
+        recommended_events = recommended_events.union(*participated_events)
+    if 3 in recommend_settings:
+        # Recommend events of the same categories as my past events
+        event_types = [event.event_type for event in user.participated_event_set.all()]
+        category_matching_events = Event.objects.filter(event_type__in = event_types)
+        recommended_events = recommended_events.union(category_matching_events)
+    if 4 in recommend_settings:
+        # Recommend events of the same organizer as my past events
+        posters = [event.poster for event in user.participated_event_set.all()]
+        poster_matching_events = Event.objects.filter(poster__in = posters)
+        recommended_events = recommended_events.union(poster_matching_events)
+
+    recommended_events = list(recommended_events)
+
+    if event_type:
+        recommended_events = [x for x in recommended_events if str(x.event_type_id) in event_type]
+
+    recommended_events = recommended_events[page:page_end]
+    return JsonResponse(api_returned_object(info=list(recommended_events)), encoder=EventSummaryEncoder)
 
 
 

@@ -14,6 +14,9 @@ def datetime_to_date_str(datetime):
 def datetime_to_time_str(datetime):
     return datetime.strftime("%H:%M:%S")
 
+def datetime_to_date_str_calendar_fmt(datetime):
+    return datetime.strftime("%Y,%d %b")
+
 def parse_bool_to_int(b):
     return "1" if b else "0"
 
@@ -47,6 +50,28 @@ class EventTypeEncoder(DjangoJSONEncoder):
             }
         return super(EventTypeEncoder, self).default(obj)
 
+
+class EventCalendarEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Event):
+            return {
+                "id": obj.pk,
+                "aid": obj.pk,
+                "uid": obj.poster.pk,
+                "week": "1",
+                "begin_time": datetime_to_date_str_calendar_fmt(obj.start_time),
+                "hour_start": datetime_to_time_str(obj.start_time),
+                "hour_end": datetime_to_time_str(obj.end_time),
+                "time_type": "1",
+                "content": "hellodhjsds",
+                "title": obj.title,
+                "img": get_image_url(obj.img),
+                "desrc": obj.description,
+                "add": obj.address,
+                "type": obj.event_type.pk,
+                "t_name": obj.event_type.name
+            }
+        return super(EventCalendarEncoder, self).default(obj)
 
 class EventSummaryEncoder(DjangoJSONEncoder):
     def default(self, obj):

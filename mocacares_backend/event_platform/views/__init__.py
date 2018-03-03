@@ -71,7 +71,7 @@ def book_event(request):
         'code': 1,
         'msg': 'Success',
         'info': status
-    }) 
+    })
 
 
 def get_booked_events(request):
@@ -91,7 +91,7 @@ def get_booked_events(request):
         'code': 1,
         'msg': 'success',
         'info': list(events)
-    }, encoder=EventSummaryEncoder)
+    }, encoder=EventCalendarEncoder)
 
 
 def get_published_events(request):
@@ -112,11 +112,11 @@ def get_published_events(request):
 def upload_image(request):
     if 'filename' not in request.FILES:
         return response_of_failure(msg='missing field(s)')
-    
+
     file_type = imghdr.what(request.FILES['filename'])
     if file_type not in IMAGE_TYPE:
         return response_of_failure(msg='uploaded file is of invalid type')
-    
+
     uploaded_image = UploadedImage(image=request.FILES['filename'])
     try:
         uploaded_image.save()

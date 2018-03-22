@@ -85,13 +85,13 @@ def user_register(request):
             'msg': 'login success'
         })
     except IntegrityError:
-        return response_of_failure('username or email already exists')
+        return response_of_failure('username or email already used')
 
 
 def get_user_info(request):
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return response_of_failure(msg='you need to login first')
+        return response_of_failure(msg='You need to login first')
     return JsonResponse(api_returned_object(info=user), encoder=UserInfoEncoder)
     
 
@@ -103,7 +103,7 @@ def set_user_info(request):
     
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return response_of_failure(msg='you need to login first')
+        return response_of_failure(msg='You need to login first')
 
     print('update user profile:\n' + str(request.POST))
     if 'username' in request.POST:

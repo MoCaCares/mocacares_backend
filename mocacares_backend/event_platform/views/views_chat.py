@@ -15,7 +15,7 @@ REDIS_PORT = 6379
 def get_noreads(request):
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return response_of_failure(msg='you need to login first')
+        return response_of_failure(msg='You need to login first')
 
     return JsonResponse(api_returned_object(info={
         'new_msg': Message.objects.filter(read=False, receiver=user).count(),
@@ -29,7 +29,7 @@ def follow_or_unfollow_user(request):
 
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return response_of_failure(msg='you need to login first')
+        return response_of_failure(msg='You need to login first')
 
     try:
         target_user = User.objects.get(pk=request.POST['fid'])
@@ -40,7 +40,7 @@ def follow_or_unfollow_user(request):
             user.following_users.add(target_user)
             status = '1'
     except ObjectDoesNotExist:
-        return response_of_failure(msg='target user not found')
+        return response_of_failure(msg='Target user not found')
 
     return JsonResponse({
         'code': 1,
@@ -55,7 +55,7 @@ def get_following_users(request):
     
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return response_of_failure(msg='you need to login first')
+        return response_of_failure(msg='You need to login first')
     
     following_users = user.following_users.all()
     if request.POST['type'] == '1':
@@ -72,11 +72,11 @@ def send_message(request):
     if 'sid' not in request.POST or 'msg' not in request.POST:
         return response_of_failure(msg='missing field(s)')
     if request.POST['msg'] == '':
-        return response_of_success(msg='empty message is not sent')
+        return response_of_success(msg='The message cannot be empty')
     
     sender = get_user(request)
     if isinstance(sender, AnonymousUser):
-        return response_of_failure(msg='you need to login to send message')
+        return response_of_failure(msg='You need to login to send message')
     
     receiver = User.objects.get(pk=request.POST['sid'])
     message = Message(sender=sender, receiver=receiver, content=request.POST['msg'], read=False)

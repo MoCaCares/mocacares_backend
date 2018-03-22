@@ -3,7 +3,7 @@ import shutil
 
 from django.dispatch import receiver
 from django.db import models
-from .models_common import UploadedImage
+from .models_uploadedimage import UploadedImage
 from .models_user import User
 
 

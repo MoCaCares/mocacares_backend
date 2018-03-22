@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from .models_common import UploadedImage
+from .models_uploadedimage import UploadedImage
 
 
 class SystemConfig(models.Model):

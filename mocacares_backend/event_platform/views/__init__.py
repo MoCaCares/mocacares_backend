@@ -31,13 +31,15 @@ def post_comment(request):
 
 def post_feedback(request):
     feedback_content = request.POST['content']
-    EmailThread(
-        subject='feedback from user',
-        content=feedback_content,
-        receiver_list=['royl8@qq.com']
-    ).start()
-
-    return response_of_success(msg='feedback sent successfully')
+    if feedback_content == '':
+        return response_of_failure(msg='Feedback content cannot be empty')
+    else:
+        EmailThread(
+            subject='feedback from user',
+            content=feedback_content,
+            receiver_list=['royl8@qq.com']
+        ).start()
+        return response_of_success(msg='Thanks for your valuable feedback')
 
 
 def book_event(request):
@@ -45,7 +47,7 @@ def book_event(request):
         return response_of_failure(msg='missing fields(s)')
     user = get_user(request)
     if isinstance(user, AnonymousUser):
-        return response_of_failure(msg='you need to log in first')
+        return response_of_failure(msg='You need to log in first to book event')
 
     event = Event.objects.get(pk=request.POST['aid'])
     if request.POST['type'] == '1':
@@ -115,7 +117,7 @@ def upload_image(request):
 
     file_type = imghdr.what(request.FILES['filename'])
     if file_type not in IMAGE_TYPE:
-        return response_of_failure(msg='uploaded file is of invalid type')
+        return response_of_failure(msg='Uploaded file is of invalid type')
 
     uploaded_image = UploadedImage(image=request.FILES['filename'])
     try:

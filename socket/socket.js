@@ -1,14 +1,14 @@
 var redis = require('redis');
-var sub = redis.createClient();
+var redisSub = redis.createClient();
 //Subscribe to the Redis chat channel
-sub.subscribe('new_message');
-sub.subscribe('new_login');
+redisSub.subscribe('new_message');
 
 var net = require('net');
 var axios = require('axios');
 
 var HOST = '0.0.0.0';
 var PORT = 4000;
+var SOCKET_CONNECTION_DURATION_IN_MILLISEC = 1000 * 60 * 60 * 6;
 
 var uidToSocketMap = new Map();
 var ipportToUidMap = new Map();
@@ -62,7 +62,7 @@ function connectionHandler(sock) {
         inspect();
     });
 
-    sock.setTimeout(1000 * 60 * 60);  // in millisecond
+    sock.setTimeout(SOCKET_CONNECTION_DURATION_IN_MILLISEC);
     sock.on('timeout', function() {
         console.log('TIMEOUT and CLOSE: ' + clientIpport);
         shutdownSocket(sock, clientIpport);
@@ -77,7 +77,7 @@ var server = net.createServer(connectionHandler);
 
 server.listen(PORT, HOST);
 
-sub.on('message', function (channel, message) {
+redisSub.on('message', function (channel, message) {
     if (channel == 'new_message') {
         message_json = JSON.parse(message.replace(/\'/g, '"'));
         if (uidToSocketMap.get(message_json.sid) === undefined)
@@ -99,18 +99,6 @@ sub.on('message', function (channel, message) {
             }
         }));
     } 
-    // else if (channel == 'new_login') {
-    //     message_json = JSON.parse(message.replace(/\'/g, '"'));
-    //     var uid = parseInt(message_json.uid);
-    //     var oldUid = parseInt(message_json.old_uid);
-    //     var sock = uidToSocketMap.get(oldUid);
-    //     var clientIpport = sock.remoteAddress + ':' + sock.remotePort;
-    //     ipportToUidMap.set(clientIpport, uid);
-    //     uidToSocketMap.set(uid, sock); 
-    //     if (oldUid !== undefined)
-    //         uidToSocketMap.delete(oldUid);
-    //     inspect();
-    // }
 });
 
 console.log('Server listening on ' + HOST +':'+ PORT);

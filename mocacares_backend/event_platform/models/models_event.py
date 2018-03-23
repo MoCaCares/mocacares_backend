@@ -11,6 +11,12 @@ class EventType(models.Model):
     name = models.TextField(null=True, blank=True)
     img = models.OneToOneField(UploadedImage, on_delete=models.SET_NULL, null=True, blank=True)
 
+    def __unicode__(self):
+        return str(self)
+
+    def __str__(self):
+        return str(self.pk) + ". " + str(self.name)
+
 
 class Event(models.Model):
     title = models.CharField(max_length=1028)
@@ -25,6 +31,9 @@ class Event(models.Model):
     followers = models.ManyToManyField(User, related_name='bookmarked_event_set', blank=True)
 
     def __unicode__(self):
+        return str(self)
+    
+    def __str__(self):
         return str(self.pk) + ". " + str(self.title) + ": " + self.description
 
 

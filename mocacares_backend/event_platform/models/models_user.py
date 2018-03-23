@@ -106,7 +106,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def get_full_name(self):
-        return self.username + "<" + self.email_address + ">" + "level:" + str(self.level) + " superuser:" + str(self.is_superuser) + " staff:" + str(self.is_staff)
+        return str(self.pk) + '. ' + self.username + " <" + self.email_address + ">"
 
     def get_short_name(self):
         return self.username
@@ -120,6 +120,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     # set_password method inherited from super class
 
     def __unicode__(self):
+        return str(self)
+    
+    def __str__(self):
         return self.get_full_name()
 
 

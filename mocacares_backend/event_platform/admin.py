@@ -9,19 +9,22 @@ class SessionAdmin(admin.ModelAdmin):
 
 class UserModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'email_address', 'level', 'is_superuser', 'is_staff']
-    list_filter = ['id', 'level', 'is_superuser', 'is_staff']
+    list_filter = ['level', 'is_superuser', 'is_staff']
     search_fields = ['id', 'username', 'email_address']
     filter_horizontal = ['groups', 'user_permissions', 'following_users']
 
 class EventModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'description']
+    list_filter = ['event_type']
+    search_fields = ['id', 'title', 'description']
     filter_horizontal = ['followers', 'participants']
 
 class FeedbackModelAdmin(admin.ModelAdmin):
     list_display = ['id']
 
 class CommentModelAdmin(admin.ModelAdmin):
-    list_display = ['id']
+    list_display = ['id', 'target_event', 'poster']
+    list_filter = ['target_event', 'poster']
 
 class EventTypeModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
@@ -31,6 +34,7 @@ class SystemConfigModelAdmin(admin.ModelAdmin):
 
 class MessageModelAdmin(admin.ModelAdmin):
     list_display = ['pk', 'sender', 'receiver', 'content', 'read']
+    list_filter = ['sender', 'receiver']
 
 class UploadedImageModelAdmin(admin.ModelAdmin):
     list_display = ['pk', 'image_url']

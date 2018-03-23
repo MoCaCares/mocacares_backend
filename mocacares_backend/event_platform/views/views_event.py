@@ -144,8 +144,10 @@ def add_or_edit_event(request):
     if 'aid' in request.POST:
         try:
             event = Event.objects.get(pk=request.POST['aid'])
+            if event.poster.pk != user.pk:
+                return response_of_failure(msg='No permission: you are not the owner of the event')
         except ObjectDoesNotExist:
-            return response_of_failure(msg='Event not found')
+            return response_of_failure(msg='Edited event not found')
     else:
         event = Event()
 
@@ -165,7 +167,7 @@ def add_or_edit_event(request):
 
     event.start_time = start_time
     event.end_time = end_time
-    event.poster_id = user.id
+    event.poster = user
 
     event.save()
     return JsonResponse({

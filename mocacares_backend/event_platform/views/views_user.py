@@ -93,14 +93,14 @@ def get_user_info(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to login first')
     return JsonResponse(api_returned_object(info=user), encoder=UserInfoEncoder)
-    
+
 
 def set_user_info(request):
     def parse_boolean(i):
         if not (i == '1' or i == '0'):
             return None
         return True if i == '1' else False
-    
+
     user = get_user(request)
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to login first')
@@ -135,7 +135,7 @@ def set_user_info(request):
             config.is_show_email = parse_boolean(request.POST['is_show_email'])
     if 'is_show_event' in request.POST:
         if parse_boolean(request.POST['is_show_event']) is not None:
-            config.is_show_events = parse_boolean(request.POST['is_show_event']) 
+            config.is_show_events = parse_boolean(request.POST['is_show_event'])
     config.save()
 
     return response_of_success(msg='update successfully')
@@ -158,7 +158,7 @@ def get_user_space(request):
             target_user_space_json['event'] = list(target_user.participated_event_set.all())
         else:
             target_user_space_json['event'] = []
-        
+
         if user in target_user.follower_set.all():
             target_user_space_json['is_friend'] = '1'
         else:
@@ -183,9 +183,9 @@ def change_pwd(request):
 
     verification_code = request.POST['verify']
     new_pwd = request.POST['newpwd']
-    token = request.POST['_token']
+    uid = user.id
 
-    if not token_vericode_pair_exists(token=token, verification_code=verification_code):
+    if not uid_vericode_pair_exists(uid=uid, verification_code=verification_code):
         return response_of_failure(msg='Invalid token or verification code.')
 
     if not validate_password_format(new_pwd):
@@ -201,12 +201,12 @@ def send_verify(request):
     if isinstance(user, AnonymousUser):
         return response_of_failure(msg='You need to log in to change password.')
 
-    token = request.POST['_token']
+    uid = user.id
 
     verification_code = random.randint(0, 99999)
     verification_code_str = str(verification_code).zfill(5)
 
-    save_token_vericode_pair(token=token, verification_code=verification_code_str)
+    save_uid_vericode_pair(uid=uid, verification_code=verification_code_str)
 
     EmailThread(
         subject = 'MocaCare Verification Code',
@@ -221,19 +221,19 @@ def send_verify(request):
 
 # Temp
 
-def save_token_vericode_pair(token, verification_code):
-    query = TokenVerificationPair.objects.filter(token=token)
+def save_uid_vericode_pair(uid, verification_code):
+    query = UidVerificationPair.objects.filter(uid=uid)
     if query:
         pair = query[0]
         pair.verification_code = verification_code
         pair.save()
     else:
-        pair = TokenVerificationPair(token=token, verification_code=verification_code)
+        pair = UidVerificationPair(uid=uid, verification_code=verification_code)
         pair.save()
 
 
-def token_vericode_pair_exists(token, verification_code=None):
-    query = TokenVerificationPair.objects.filter(token=token, verification_code=verification_code)
+def uid_vericode_pair_exists(uid, verification_code=None):
+    query = UidVerificationPair.objects.filter(uid=uid, verification_code=verification_code)
     if query:
         query[0].delete()
         return True

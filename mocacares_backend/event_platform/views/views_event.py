@@ -283,24 +283,3 @@ def get_recommended_events(request):
 #         $this->apiReturn(1, '', $list);
 #     }
 # }
-
-
-# Temp
-
-def save_token_vericode_pair(token, verification_code):
-    query = TokenVerificationPair.objects.filter(token=token)
-    if query:
-        pair = query[0]
-        pair.verification_code = verification_code
-        pair.save()
-    else:
-        pair = TokenVerificationPair(token=token, verification_code=verification_code)
-        pair.save()
-
-
-def token_vericode_pair_exists(token, verification_code=None):
-    query = TokenVerificationPair.objects.filter(token=token, verification_code=verification_code)
-    if query:
-        query[0].delete()
-        return True
-    return False

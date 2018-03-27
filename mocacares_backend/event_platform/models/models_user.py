@@ -121,7 +121,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __unicode__(self):
         return str(self)
-    
+
     def __str__(self):
         return self.get_full_name()
 
@@ -142,18 +142,6 @@ def delete_local_portrait(sender, instance, **kwargs):
 
 
 # TODO:  if scale increase, use redis to store the verification code pair
-class TokenVerificationPair(models.Model):
-    token = models.CharField(max_length=32)
+class UidVerificationPair(models.Model):
+    uid = models.IntegerField()
     verification_code = models.CharField(max_length=5)
-
-
-
-
-
-
-
-
-
-
-
-
